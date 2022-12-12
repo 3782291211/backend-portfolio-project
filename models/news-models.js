@@ -16,6 +16,7 @@ exports.selectArticles = () => {
   ORDER BY articles.created_at DESC;
   `).then(({rows: articles}) => articles);
 
+
 }
 
 exports.selectArticlesById = articleId => {
@@ -27,4 +28,7 @@ exports.selectArticlesById = articleId => {
 }
 
 
+
+
+}
 

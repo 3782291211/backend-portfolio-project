@@ -29,6 +29,7 @@ return request(app)
 .then(({ body : { topics } }) => {
 expect(topics).toBeInstanceOf(Array);
 expect(topics).toHaveLength(3);
+
 topics.forEach(topic => {
     expect(topic).toEqual(
       expect.objectContaining({
