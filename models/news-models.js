@@ -3,6 +3,7 @@ const db = require('../db/connection');
 exports.selectTopics = () => {
   return db.query(`SELECT * FROM topics;`)
   .then(({rows : topics}) => topics);
+
 };
 
 exports.selectArticles = () => {
@@ -14,6 +15,7 @@ exports.selectArticles = () => {
   GROUP BY articles.article_id
   ORDER BY articles.created_at DESC;
   `).then(({rows: articles}) => articles);
+
 }
 
 exports.selectArticlesById = articleId => {
@@ -23,4 +25,6 @@ exports.selectArticlesById = articleId => {
   `, [articleId]).then(({rows: articles, rowCount}) => 
   rowCount === 0 ? Promise.reject({status: 400, msg: "Bad request"}) : articles);
 }
+
+
 
