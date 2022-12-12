@@ -16,4 +16,19 @@ exports.selectArticles = () => {
   ORDER BY articles.created_at DESC;
   `).then(({rows: articles}) => articles);
 
+
 }
+
+exports.selectArticlesById = articleId => {
+  return db.query(`
+  SELECT author, title, article_id, body, topic, created_at, votes
+  FROM articles WHERE article_id = $1;
+  `, [articleId]).then(({rows: articles, rowCount}) => 
+  rowCount === 0 ? Promise.reject({status: 400, msg: "Bad request"}) : articles);
+}
+
+
+
+
+}
+
