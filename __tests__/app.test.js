@@ -41,7 +41,7 @@ topics.forEach(topic => {
 })
 
 describe("3) GET /api/articles", () => {
-it("Responds with 200 status code and an array of article objects sorted by ascending date order, each object having a comment_count property with the correct number of comments for that article.", () => {
+it("Responds with 200 status code and an array of article objects sorted by descending date order, each object having a comment_count property with the correct number of comments for that article.", () => {
 return request(app)
 .get('/api/articles')
 .expect(200)
