@@ -3,6 +3,7 @@ const db = require('../db/connection');
 exports.selectTopics = () => {
   return db.query(`SELECT * FROM topics;`)
   .then(({rows : topics}) => topics);
+
 };
 
 exports.selectArticles = () => {
@@ -14,4 +15,5 @@ exports.selectArticles = () => {
   GROUP BY articles.article_id
   ORDER BY articles.created_at DESC;
   `).then(({rows: articles}) => articles);
+
 }

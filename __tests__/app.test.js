@@ -2,6 +2,7 @@ const request = require('supertest');
 const db = require('../db/connection');
 const app = require('../app');
 const seed = require('../db/seeds/seed');
+
 const data = require('../db/data/test-data/index');
 
 afterAll(() => {
@@ -29,6 +30,7 @@ return request(app)
 .then(({ body : { topics } }) => {
 expect(topics).toBeInstanceOf(Array);
 expect(topics).toHaveLength(3);
+
 topics.forEach(topic => {
     expect(topic).toEqual(
       expect.objectContaining({
