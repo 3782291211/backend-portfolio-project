@@ -34,3 +34,12 @@ exports.selectCommentsByArticle = articleId => {
   ORDER BY comments.created_at DESC;
   `, [articleId]).then(({rows: comments}) => comments);
 };
+
+exports.insertComment = (newComment, articleId) => {
+  return db.query(`
+  INSERT INTO comments (body, article_id, author)
+  VALUES ($1, $2, $3)
+  RETURNING *;
+  `, [newComment.body, articleId, newComment.username])
+  .then(({rows : updatedComment, rowCount}) => updatedComment[0]);
+};
