@@ -245,8 +245,8 @@ describe("7) PATCH /api/articles/:article_id", () => {
     .patch('/api/articles/7')
     .send({ inc_votes: 23 })
     .expect(200)
-    .then(({body: {updatedArticle}}) => {
-      expect(updatedArticle).toEqual(
+    .then(({body: {article}}) => {
+      expect(article).toEqual(
         expect.objectContaining({
           article_id: 7,
           votes: 23,
@@ -264,16 +264,16 @@ describe("7) PATCH /api/articles/:article_id", () => {
     .patch('/api/articles/1')
     .send({ inc_votes: -64 })
     .expect(200)
-    .then(({body: {updatedArticle}}) => {
-      expect(updatedArticle.article_id).toBe(1);
-      expect(updatedArticle.votes).toBe(36);
+    .then(({body: {article}}) => {
+      expect(article.article_id).toBe(1);
+      expect(article.votes).toBe(36);
     })
   })
   
   it("Responds with 400 status code if request body contains malformed key.", () => {
     return request(app)
     .patch('/api/articles/10')
-    .send({ inc_Votes: 4 })
+    .send({ banana: 12 })
     .expect(400)
     .then(({body: {msg}}) => {
       expect(msg).toBe('Bad request.')
@@ -309,4 +309,23 @@ describe("7) PATCH /api/articles/:article_id", () => {
       expect(msg).toBe('Invalid data type in URL.');
     })
   })
+})
+
+describe("8) GET /api/users", () => {
+it("Responds with 200 status code and an array of objects, each representing a user.", () => {
+  return request(app)
+  .get('/api/users')
+  .expect(200)
+  .then(({body : {users}}) => {
+    expect(users).toHaveLength(4);
+    users.forEach(user => 
+      expect(user).toEqual(
+        expect.objectContaining({
+          username: expect.any(String),
+          name: expect.any(String),
+          avatar_url: expect.any(String)
+        })
+    ));
+  })
+})
 })

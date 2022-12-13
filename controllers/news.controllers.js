@@ -1,4 +1,4 @@
-const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes} = require('../models/news.models');
+const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers} = require('../models/news.models');
 const {checkIdExists} = require('../models/utility-queries.models');
 
 exports.getTopics = (req, res, next) => {
@@ -35,6 +35,12 @@ exports.postComment = (req, res, next) => {
 
 exports.patchArticleVotes = (req, res, next) => {
   updateArticleVotes(req.params.article_id, req.body.inc_votes)
-  .then(updatedArticle => res.status(200).send({updatedArticle}))
+  .then(article => res.status(200).send({article}))
+  .catch(err => next(err));
+};
+
+exports.getUsers = (req, res) => {
+  selectUsers()
+  .then(users => res.status(200).send({users}))
   .catch(err => next(err));
 };
