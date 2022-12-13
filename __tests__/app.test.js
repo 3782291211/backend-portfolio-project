@@ -107,3 +107,64 @@ describe("4) GET /api/articles/:article_id", () => {
     })
   })
   })
+
+describe("5) GET /api/articles/:article_id/comments", () => {
+it("Responds with 200 status code and an array of comments for the given article_id, sorted by most recent (test for article_id 5).", () => {
+return request(app)
+.get('/api/articles/5/comments')
+.expect(200)
+.then(({body:{comments}}) => {
+  expect(comments).toBeSortedBy('created_at', {descending : true});
+  expect(comments).toHaveLength(2);
+  comments.forEach(comment => {
+    expect(comment).toEqual(
+      expect.objectContaining({
+        comment_id: expect.any(Number),
+        votes: expect.any(Number),
+        created_at: expect.any(String),
+        author: expect.any(String),
+        body: expect.any(String)
+      })
+    )
+  });
+})
+})
+
+it("Responds with 200 status code and an array of comments for the given article_id, sorted by most recent.", () => {
+  return request(app)
+  .get('/api/articles/1/comments')
+  .expect(200)
+  .then(({body:{comments}}) => {
+    expect(comments).toBeSortedBy('created_at', {descending : true});
+    expect(comments).toHaveLength(11);
+  })
+})
+
+it("Returns 404 status code if client makes a request on a path that contains an article_id which does not exist in the database.", () => {
+  return request(app)
+  .get('/api/articles/44/comments')
+  .expect(404)
+  .then(({body : {msg}}) => {
+     expect(msg).toBe("Article not found.");
+  })
+})
+
+it("Returns 200 status code and an empty array if client makes a request on a path that contains a valid article_id for which there are no comments in the database.", () => {
+  return request(app)
+  .get('/api/articles/4/comments')
+  .expect(200)
+  .then(({body : {comments}}) => {
+    expect(comments).toEqual([]);
+  })
+})
+
+it("Returns 400 status code if client makes a request on a path that contains an article_id which uses an invalid data type.", () => {
+  return request(app)
+  .get('/api/articles/1l/comments')
+  .expect(400)
+  .then(({body : {msg}}) => {
+    expect(msg).toBe("Bad request.");
+  })
+})
+
+})
