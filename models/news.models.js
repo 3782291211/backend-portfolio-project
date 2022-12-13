@@ -49,6 +49,11 @@ exports.updateArticleVotes = (articleId, incVotes) => {
   UPDATE articles SET votes = votes + $1
   WHERE article_id = $2
   RETURNING *;
-  `, [incVotes, articleId]).then(({rows : updatedArticle, rowCount}) => 
-  rowCount === 0 ? Promise.reject({status: 404, msg: "Article not found."}) : updatedArticle[0]);
+  `, [incVotes, articleId])
+  .then(({rows : updatedArticle, rowCount}) => 
+    rowCount === 0 ? Promise.reject({status: 404, msg: "Article not found."}) 
+    : updatedArticle[0]);
 };
+
+exports.selectUsers = () => 
+  db.query(`SELECT * FROM users;`).then(({rows: users}) => users);
