@@ -18,8 +18,12 @@ exports.selectArticles = () => {
 
 exports.selectArticleById = articleId => {
   return db.query(`
-  SELECT author, title, article_id, body, topic, created_at, votes
-  FROM articles WHERE article_id = $1;
+  SELECT articles.author, title, articles.article_id, articles.body, topic, articles.created_at, articles.votes, COUNT(comments.comment_id) ::INTEGER AS comment_count 
+  FROM articles
+  LEFT JOIN comments
+  ON articles.article_id = comments.article_id
+  WHERE articles.article_id = $1
+  GROUP BY articles.article_id;
   `, [articleId]).then(({rows: article, rowCount}) => 
   rowCount === 0 ? Promise.reject({status: 404, msg: "Article not found."}) : article[0]);
 };

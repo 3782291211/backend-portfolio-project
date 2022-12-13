@@ -329,3 +329,22 @@ it("Responds with 200 status code and an array of objects, each representing a u
   })
 })
 })
+
+describe("9) GET /api/articles/:article_id (comment count)", () => {
+  it("Responds with 200 status code and an article object which now includes a comment_count property.", () => {
+  return request(app)
+  .get('/api/articles/1')
+  .expect(200)
+  .then(({body: {article}}) => {
+    expect(article.comment_count).toBe(11);
+  
+  return request(app)
+    .get('/api/articles/3')
+    .expect(200)
+    .then(({body: {article}}) => {
+      expect(article.comment_count).toBe(2)
+    });
+  })
+  })
+  })
+  
