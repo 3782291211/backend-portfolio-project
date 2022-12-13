@@ -145,16 +145,16 @@ it("Returns 404 status code if client makes a request on a path that contains an
   .get('/api/articles/44/comments')
   .expect(404)
   .then(({body : {msg}}) => {
-     expect(msg).toBe("Comment(s) not found.");
+     expect(msg).toBe("Article not found.");
   })
 })
 
-it("Returns 404 status code if client makes a request on a path that contains an article_id for which there are no comments in the database.", () => {
+it("Returns 200 status code and an empty array if client makes a request on a path that contains a valid article_id for which there are no comments in the database.", () => {
   return request(app)
   .get('/api/articles/4/comments')
-  .expect(404)
-  .then(({body : {msg}}) => {
-     expect(msg).toBe("Comment(s) not found.");
+  .expect(200)
+  .then(({body : {comments}}) => {
+    expect(comments).toEqual([]);
   })
 })
 

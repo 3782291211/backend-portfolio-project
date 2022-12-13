@@ -32,6 +32,5 @@ exports.selectCommentsByArticle = articleId => {
   ON articles.article_id = comments.article_id
   WHERE articles.article_id = $1
   ORDER BY comments.created_at DESC;
-  `, [articleId]).then(({rows: comments, rowCount}) => 
-  rowCount === 0 ? Promise.reject({status: 404, msg: "Comment(s) not found."}) : comments);
+  `, [articleId]).then(({rows: comments}) => comments);
 };

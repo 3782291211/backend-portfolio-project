@@ -1,4 +1,5 @@
-const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle} = require('../models/news-models');
+const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle} = require('../models/news.models');
+const {checkIdExists} = require('../models/utility-queries.models');
 
 exports.getTopics = (req, res, next) => {
   selectTopics().then(topics => res.status(200).send({topics}))
@@ -17,7 +18,11 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getCommentsByArticle = (req, res, next) => {
-  selectCommentsByArticle(req.params.article_id)
-  .then(comments => res.status(200).send({comments}))
+  const { article_id } = req.params; 
+  return Promise.all([
+    selectCommentsByArticle(article_id),
+    checkIdExists(article_id)
+  ])
+  .then(([comments]) => res.status(200).send({comments}))
   .catch(err => next(err));
 };
