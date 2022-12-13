@@ -348,3 +348,84 @@ describe("9) GET /api/articles/:article_id (comment count)", () => {
   })
   })
   
+describe.only("10) GET /api/articles (queries)", () => {
+it("Path includes a query which filters articles by topic, responding with a 200 status code and a filtered list of articles", () => {
+return request(app)
+.get('/api/articles?topic=mitch')
+.expect(200)
+.then(({body: {articles}}) => {
+  expect(articles).toHaveLength(11);
+}).then(()=>{
+   return request(app)
+   .get('/api/articles?topic=cats')
+   .expect(200)
+   .then(({body: {articles}}) => {
+     expect(articles).toHaveLength(1);
+    });
+})
+
+})
+
+it("Path includes a query which filters articles by column, responding with a 200 status code and a filtered list of articles. In the absence of an order query, the default sort order is descending.", () => {
+  return request(app)
+  .get('/api/articles?sort_by=author')
+  .expect(200)
+  .then(({body: {articles}}) => {
+    expect(articles).toBeSortedBy('author', { descending : true });
+  }).then(()=>{
+     return request(app)
+     .get('/api/articles?sort_by=title')
+     .expect(200)
+     .then(({body: {articles}}) => {
+       expect(articles).toBeSortedBy('title', { descending : true });
+      });
+  })
+})
+
+it("Path includes a query which can order specified columns in ascending order, returning a status code of 200.", () => {
+  return request(app)
+  .get('/api/articles?sort_by=votes&order=asc')
+  .expect(200)
+  .then(({body: {articles}}) => {
+    expect(articles).toBeSortedBy('votes');
+})
+})
+
+it("Path can utilise multiple queries at once, returning the correct list of articles", () => {
+  return request(app)
+  .get('/api/articles?sort_by=title&order=asc&topic=mitch')
+  .expect(200)
+  .then(({body: {articles}}) => {
+    expect(articles).toHaveLength(11);
+    expect(articles).toBeSortedBy('title', { ascending : true });
+    articles.forEach(article => expect(article.topic).toBe('mitch'));
+  })
+})
+
+it("Responds with 400 status code if request URL includes query parameters that fail validation.", () => {
+  return request(app)
+  .get('/api/articles?sort_by=title;%DROP%DATABASE')
+  .expect(400)
+  .then(({ body : { msg } }) => {
+    expect(msg).toBe('Invalid sort query.');
+  })
+})
+
+it("Responds with 404 status code if client's request includes a topic query for a topic that does not exist in the database", () => {
+  return request(app)
+  .get('/api/articles?topic=jump')
+  .expect(404)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe('Topic not found.');
+  })
+})
+
+it("Responds with 200 status code and an empty array if client's request includes a topic query for a topic that exists in the database but which is not referenced by any of the article objects.", () => {
+  return request(app)
+  .get('/api/articles?topic=paper')
+  .expect(200)
+  .then(({ body : { articles }}) => {
+    expect(articles).toEqual([]);
+  })
+})
+})

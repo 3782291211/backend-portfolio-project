@@ -1,5 +1,5 @@
 const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers} = require('../models/news.models');
-const {checkIdExists} = require('../models/utility-queries.models');
+const {checkIdExists, checkTopicExists} = require('../models/utility-queries.models');
 
 exports.getTopics = (req, res, next) => {
   selectTopics().then(topics => res.status(200).send({topics}))
@@ -7,9 +7,13 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  selectArticles().then(articles => res.status(200).send({articles}))
-  .catch(err => next(err));
-}
+ return Promise.all([
+     selectArticles(req.query),
+     checkTopicExists(req.query.topic)
+  ]).then(([articles]) => {
+    res.status(200).send({articles});
+  }).catch(err => next(err));
+};
 
 exports.getArticleById = (req, res, next) => {
   selectArticleById(req.params.article_id)
