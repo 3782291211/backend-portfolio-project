@@ -1,12 +1,19 @@
 exports.invalidPath = (req, res) => 
   res.status(404).send({msg: "Path not found."});
 
-exports.handlePSQLerrors = (err, req, res,next) => {
-  if (err.code === '22P02' || err.code === '23502' || err.code === '23503' ) {
-    res.status(400).send({msg: "Bad request."}) 
+exports.handlePSQLerrors = (err, req, res,next) =>
+    err.code === '22P02' ? res.status(400).send({msg: 'Invalid data type in URL.'})
+  : err.code === '23502' ? res.status(400).send({msg: "Bad request."})
+  : next(err);
+
+exports.handleForeingKeyError = (err, req, res,next) => {
+  if (err.code === '23503') {
+    err.detail.includes('article') ? res.status(404).send({msg: "Article not found."})
+    : err.detail.includes('author') ? res.status(404).send({msg: "Username not found."})
+    : res.status(404).send({msg: "Resource not found."});
   } else {
     next(err);
-  };
+  }
 };
 
 exports.handleCustomErrors = (err, req, res, next) =>

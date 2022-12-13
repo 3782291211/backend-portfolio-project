@@ -103,18 +103,17 @@ return request(app)
 .get('/api/articles/2l')
 .expect(400)
 .then(({body : {msg}}) => {
-  expect(msg).toBe("Bad request.");
+  expect(msg).toBe("Invalid data type in URL.");
   })
 })
 })
 
 describe("5) GET /api/articles/:article_id/comments", () => {
-it("Responds with 200 status code and an array of comments for the given article_id, sorted by most recent (test for article_id 5).", () => {
+it("Responds with 200 status code and an array of comments for the given article_id.", () => {
 return request(app)
 .get('/api/articles/5/comments')
 .expect(200)
 .then(({body:{comments}}) => {
-  expect(comments).toBeSortedBy('created_at', {descending : true});
   expect(comments).toHaveLength(2);
   comments.forEach(comment => {
     expect(comment).toEqual(
@@ -163,7 +162,7 @@ it("Returns 400 status code if client makes a request on a path that contains an
   .get('/api/articles/1l/comments')
   .expect(400)
   .then(({body : {msg}}) => {
-    expect(msg).toBe("Bad request.");
+    expect(msg).toBe("Invalid data type in URL.");
   })
 })
 
@@ -202,9 +201,9 @@ it("Returns 400 status code if username specified in request body does not refer
   return request(app)
   .post('/api/articles/2/comments')
   .send({username: "Racetrack", body: "Where did he go?"})
-  .expect(400)
+  .expect(404)
   .then(({ body : { msg }}) => {
-    expect(msg).toBe("Bad request.");
+    expect(msg).toBe("Username not found.");
   });
 })
   
@@ -222,11 +221,92 @@ it("Returns 400 if article_id parameter does not reference an existing article i
   return request(app)
   .post('/api/articles/22/comments')
   .send({username : "lurker", body: "Engulfed by a sea of neon lights."})
+  .expect(404)
+  .then(({body : {msg}}) => {
+    expect(msg).toBe("Article not found.");
+  });
+})
+
+it("Returns 400 status code if response URL includes an invalid article_id.", () => {
+  return request(app)
+  .post('/api/articles/id9/comments')
+  .send({username : "lurker", body: "Engulfed by a sea of neon lights."})
   .expect(400)
   .then(({body : {msg}}) => {
-    expect(msg).toBe("Bad request.");
+    expect(msg).toBe("Invalid data type in URL.");
   });
 })
   
 })
+
+describe("7) PATCH /api/articles/:article_id", () => {
+  it("Responds with 200 status code and the updated article; increases the number of votes on the correct article and by the specified number.", () => {
+    return request(app)
+    .patch('/api/articles/7')
+    .send({ inc_votes: 23 })
+    .expect(200)
+    .then(({body: {updatedArticle}}) => {
+      expect(updatedArticle).toEqual(
+        expect.objectContaining({
+          article_id: 7,
+          votes: 23,
+          author: expect.any(String),
+          title: expect.any(String),
+          topic:expect.any(String),
+          created_at: expect.any(String)
+        })
+      )
+    });
+  })
   
+  it("Responds with 200 status code and the updated article; decreases the number of votes on the correct article and by the specified number.", () => {
+    return request(app)
+    .patch('/api/articles/1')
+    .send({ inc_votes: -64 })
+    .expect(200)
+    .then(({body: {updatedArticle}}) => {
+      expect(updatedArticle.article_id).toBe(1);
+      expect(updatedArticle.votes).toBe(36);
+    })
+  })
+  
+  it("Responds with 400 status code if request body contains malformed key.", () => {
+    return request(app)
+    .patch('/api/articles/10')
+    .send({ inc_Votes: 4 })
+    .expect(400)
+    .then(({body: {msg}}) => {
+      expect(msg).toBe('Bad request.')
+  })
+  })
+  
+  it("Responds with 400 status code if request body contains the wrong data type.", () => {
+    return request(app)
+    .patch('/api/articles/1')
+    .send({ inc_votes: "six" })
+    .expect(400)
+    .then(({body: {msg}}) => {
+      expect(msg).toBe('Invalid data type in URL.')
+  })
+  })
+  
+  it("Responds with 404 status code if article_id parameter in the endpoint does not reference an existing article in the database.", () => {
+    return request(app)
+    .patch('/api/articles/13')
+    .send({ inc_votes: 4 })
+    .expect(404)
+    .then(({body : {msg}}) => {
+      expect(msg).toBe('Article not found.');
+    })
+  })
+  
+  it("Responds with 400 status code if article_id parameter in the endpoint is invalid (incorrect data type/format)", () => {
+    return request(app)
+    .patch('/api/articles/user10')
+    .send({ inc_votes: 54 })
+    .expect(400)
+    .then(({body : {msg}}) => {
+      expect(msg).toBe('Invalid data type in URL.');
+    })
+  })
+})

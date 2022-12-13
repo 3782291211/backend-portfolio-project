@@ -41,5 +41,14 @@ exports.insertComment = (newComment, articleId) => {
   VALUES ($1, $2, $3)
   RETURNING *;
   `, [newComment.body, articleId, newComment.username])
-  .then(({rows : updatedComment, rowCount}) => updatedComment[0]);
+  .then(({rows : updatedComment}) => updatedComment[0]);
+};
+
+exports.updateArticleVotes = (articleId, incVotes) => {
+  return db.query(`
+  UPDATE articles SET votes = votes + $1
+  WHERE article_id = $2
+  RETURNING *;
+  `, [incVotes, articleId]).then(({rows : updatedArticle, rowCount}) => 
+  rowCount === 0 ? Promise.reject({status: 404, msg: "Article not found."}) : updatedArticle[0]);
 };
