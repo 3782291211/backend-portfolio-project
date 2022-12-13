@@ -21,5 +21,5 @@ exports.selectArticleById = articleId => {
   SELECT author, title, article_id, body, topic, created_at, votes
   FROM articles WHERE article_id = $1;
   `, [articleId]).then(({rows: article, rowCount}) => 
-  rowCount === 0 ? Promise.reject({status: 404, msg: "Invalid path."}) : article[0]);
+  rowCount === 0 ? Promise.reject({status: 404, msg: "Article not found."}) : article[0]);
 };

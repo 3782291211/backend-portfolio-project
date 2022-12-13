@@ -16,7 +16,7 @@ return request(app)
 .get('/api/topisc')
 .expect(404)
 .then(({ body : { msg }}) => {
-  expect(msg).toBe('Invalid path.');
+  expect(msg).toBe('Path not found.');
 })
 })
 })
@@ -94,7 +94,7 @@ describe("4) GET /api/articles/:article_id", () => {
     .get('/api/articles/20')
     .expect(404)
     .then(({body : {msg}}) => {
-      expect(msg).toBe("Invalid path.");
+      expect(msg).toBe("Article not found.");
     })
   })
   

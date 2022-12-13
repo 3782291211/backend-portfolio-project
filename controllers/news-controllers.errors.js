@@ -1,8 +1,8 @@
 exports.invalidPath = (req, res) => 
-  res.status(404).send({msg: "Invalid path."});
+  res.status(404).send({msg: "Path not found."});
 
 exports.handlePSQLerrors = (err, req, res, next) =>
-  /22P02/.test(err.code) ? res.status(400).send({msg: "Bad request."}) : next(err);
+  err.code === '22P02' ? res.status(400).send({msg: "Bad request."}) : next(err);
 
 exports.handleCustomErrors = (err, req, res, next) =>
   err.status && err.msg ? res.status(err.status).send({msg: err.msg}) : next(err);
