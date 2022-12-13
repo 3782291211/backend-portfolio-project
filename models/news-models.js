@@ -3,7 +3,6 @@ const db = require('../db/connection');
 exports.selectTopics = () => {
   return db.query(`SELECT * FROM topics;`)
   .then(({rows : topics}) => topics);
-
 };
 
 exports.selectArticles = () => {
@@ -15,20 +14,12 @@ exports.selectArticles = () => {
   GROUP BY articles.article_id
   ORDER BY articles.created_at DESC;
   `).then(({rows: articles}) => articles);
+};
 
-
-}
-
-exports.selectArticlesById = articleId => {
+exports.selectArticleById = articleId => {
   return db.query(`
   SELECT author, title, article_id, body, topic, created_at, votes
   FROM articles WHERE article_id = $1;
-  `, [articleId]).then(({rows: articles, rowCount}) => 
-  rowCount === 0 ? Promise.reject({status: 400, msg: "Bad request"}) : articles);
-}
-
-
-
-
-}
-
+  `, [articleId]).then(({rows: article, rowCount}) => 
+  rowCount === 0 ? Promise.reject({status: 404, msg: "Invalid path."}) : article[0]);
+};

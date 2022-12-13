@@ -16,7 +16,7 @@ return request(app)
 .get('/api/topisc')
 .expect(404)
 .then(({ body : { msg }}) => {
-  expect(msg).toBe('Invalid path');
+  expect(msg).toBe('Invalid path.');
 })
 })
 })
@@ -71,3 +71,39 @@ return request(app)
 })
 })
 
+describe("4) GET /api/articles/:article_id", () => {
+  it("Responds with 200 status code and an article object with an article_id matching the value specified in the path.", () => {
+  return request(app)
+  .get('/api/articles/8')
+  .expect(200)
+  .then(({body:{article}}) => {
+    expect(article).toEqual(expect.objectContaining({
+      author: "icellusedkars",
+      title: "Does Mitch predate civilisation?",
+      article_id: 8,
+      body: "Archaeologists have uncovered a gigantic statue from the dawn of humanity, and it has an uncanny resemblance to Mitch. Surely I am not the only person who can see this?!",
+      topic: "mitch",
+      created_at: expect.any(String),
+      votes: 0
+    }));
+  })
+  })
+  
+  it("Returns 404 status code if client makes a request on a path that contains an article_id which does not exist in the database.", () => {
+    return request(app)
+    .get('/api/articles/20')
+    .expect(404)
+    .then(({body : {msg}}) => {
+      expect(msg).toBe("Invalid path.");
+    })
+  })
+  
+  it("Returns 400 status code if client makes a request on a path that contains an article_id which uses an invalid data type.", () => {
+    return request(app)
+    .get('/api/articles/2l')
+    .expect(400)
+    .then(({body : {msg}}) => {
+      expect(msg).toBe("Bad request.");
+    })
+  })
+  })
