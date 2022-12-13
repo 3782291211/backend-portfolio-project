@@ -3,6 +3,7 @@ const apiRouter = require('./routes/api-router');
 const {invalidPath, handlePSQLerrors, handleCustomErrors, handle500errors} = require('./controllers/news.controllers.errors');
 const app = express();
 
+app.use(express.json());
 app.use('/api', apiRouter);
 
 app.all('*', invalidPath);

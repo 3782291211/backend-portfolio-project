@@ -72,41 +72,41 @@ return request(app)
 })
 
 describe("4) GET /api/articles/:article_id", () => {
-  it("Responds with 200 status code and an article object with an article_id matching the value specified in the path.", () => {
-  return request(app)
-  .get('/api/articles/8')
-  .expect(200)
-  .then(({body:{article}}) => {
-    expect(article).toEqual(expect.objectContaining({
-      author: "icellusedkars",
-      title: "Does Mitch predate civilisation?",
-      article_id: 8,
-      body: "Archaeologists have uncovered a gigantic statue from the dawn of humanity, and it has an uncanny resemblance to Mitch. Surely I am not the only person who can see this?!",
-      topic: "mitch",
-      created_at: expect.any(String),
-      votes: 0
-    }));
-  })
-  })
+it("Responds with 200 status code and an article object with an article_id matching the value specified in the path.", () => {
+return request(app)
+.get('/api/articles/8')
+.expect(200)
+.then(({body:{article}}) => {
+  expect(article).toEqual(expect.objectContaining({
+    author: "icellusedkars",
+    title: "Does Mitch predate civilisation?",
+    article_id: 8,
+    body: "Archaeologists have uncovered a gigantic statue from the dawn of humanity, and it has an uncanny resemblance to Mitch. Surely I am not the only person who can see this?!",
+    topic: "mitch",
+    created_at: expect.any(String),
+    votes: 0
+  }));
+})
+})
   
-  it("Returns 404 status code if client makes a request on a path that contains an article_id which does not exist in the database.", () => {
-    return request(app)
-    .get('/api/articles/20')
-    .expect(404)
-    .then(({body : {msg}}) => {
-      expect(msg).toBe("Article not found.");
-    })
+it("Returns 404 status code if client makes a request on a path that contains an article_id which does not exist in the database.", () => {
+return request(app)
+.get('/api/articles/20')
+.expect(404)
+.then(({body : {msg}}) => {
+  expect(msg).toBe("Article not found.");
   })
+})
   
-  it("Returns 400 status code if client makes a request on a path that contains an article_id which uses an invalid data type.", () => {
-    return request(app)
-    .get('/api/articles/2l')
-    .expect(400)
-    .then(({body : {msg}}) => {
-      expect(msg).toBe("Bad request.");
-    })
+it("Returns 400 status code if client makes a request on a path that contains an article_id which uses an invalid data type.", () => {
+return request(app)
+.get('/api/articles/2l')
+.expect(400)
+.then(({body : {msg}}) => {
+  expect(msg).toBe("Bad request.");
   })
-  })
+})
+})
 
 describe("5) GET /api/articles/:article_id/comments", () => {
 it("Responds with 200 status code and an array of comments for the given article_id, sorted by most recent (test for article_id 5).", () => {
@@ -168,3 +168,65 @@ it("Returns 400 status code if client makes a request on a path that contains an
 })
 
 })
+
+describe("6) POST /api/articles/:article_id/comments", () => {
+it("Responds with 201 status code, adds new comment to database and sends the newly posted comment in the response.", () => {
+  return request(app)
+  .post('/api/articles/4/comments')
+  .send({username : "lurker", body: "To listen requires a voice, for what needs to be known requires us to ask."})
+  .expect(201)
+  .then(({body : {new_comment}}) => {
+     expect(new_comment).toEqual(
+      expect.objectContaining({
+          comment_id: 19,
+          body: "To listen requires a voice, for what needs to be known requires us to ask.",
+          article_id: 4,
+          author : "lurker",
+          votes: 0,
+          created_at: expect.any(String)
+      }));
+    });
+})
+  
+it("Returns 400 status code if request body is missing a required key.", () => {
+  return request(app)
+  .post('/api/articles/8/comments')
+  .send({body: "To listen requires a voice, for what needs to be known requires us to ask."})
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Bad request.");
+  });
+})
+  
+it("Returns 400 status code if username specified in request body does not reference an existing username in the users table (foreign key constraint violation).", () => {
+  return request(app)
+  .post('/api/articles/2/comments')
+  .send({username: "Racetrack", body: "Where did he go?"})
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Bad request.");
+  });
+})
+  
+it("Returns 400 status code if object in request body contains a misspelled key (not-null constraint violation).", () => {
+return request(app)
+  .post('/api/articles/11/comments')
+  .send({userneme: "icellusedkars", body: 'hello'})
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Bad request.");
+  });
+})
+  
+it("Returns 400 if article_id parameter does not reference an existing article in the database (foreign key constraint violation).", () => {
+  return request(app)
+  .post('/api/articles/22/comments')
+  .send({username : "lurker", body: "Engulfed by a sea of neon lights."})
+  .expect(400)
+  .then(({body : {msg}}) => {
+    expect(msg).toBe("Bad request.");
+  });
+})
+  
+})
+  
