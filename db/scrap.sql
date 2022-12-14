@@ -1,5 +1,5 @@
-\c nc_news;
-
+\c nc_news_test;
+/*
 \echo '\n \n topics \n'
 SELECT * FROM topics;
 
@@ -11,7 +11,7 @@ SELECT article_id, title, topic, author, created_at, votes FROM articles LIMIT 1
 
 \echo '\n \n comments \n'
 SELECT comment_id, article_id, author, votes, created_at FROM comments LIMIT 10;
-
+*/
 
 \echo '\n \n articles with comment count AND LIMIT \n'
 
@@ -24,10 +24,14 @@ ORDER BY articles.created_at ASC
 LIMIT 10;
 
 
-\echo '\n \n Insert article \n'
+SELECT * FROM articles;
 
---INSERT INTO articles (title, topic, author, body) 
---VALUES ('Welcome to Fat City', 'coding', 'grumpy19', 'Wow oh wow') RETURNING *;
+\echo '\n \n Comments for article 2 \n'
+SELECT * FROM comments;
 
-INSERT INTO topics (slug, description)
-VALUES (NULL, 'Let''s try this again') RETURNING *;
+\echo '\n \n comments for article 36 \n'
+--SELECT * FROM comments WHERE article_id = 36;
+
+\echo '\n \n DELETE article \n'
+
+--DELETE FROM articles WHERE article_id = 36 RETURNING*;

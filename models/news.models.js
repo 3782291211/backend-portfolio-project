@@ -94,7 +94,7 @@ exports.selectUsers = () =>
 
 
 exports.deleteCommentById = commentId => 
-  db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, [commentId]);
+  db.query(`DELETE FROM comments WHERE comment_id = $1;`, [commentId]);
 
 
 exports.readJSONFile = () =>
@@ -135,3 +135,6 @@ exports.insertTopic = (slug, description) => {
     RETURNING *;`, [slug, description])
     .then(({rows: topic}) => topic[0]);
 };
+
+exports.deleteArticleById = articleId => 
+  db.query(`DELETE FROM articles WHERE article_id = $1;`, [articleId]);

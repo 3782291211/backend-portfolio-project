@@ -857,3 +857,37 @@ return request(app)
 })
 })
 })
+
+describe.only("19) DELETE /api/articles/:article_id", () => {
+it("Responds with 204 status code and no content; deletes article from database.", () => {
+return request(app)
+.delete('/api/articles/8')
+.expect(204)
+.then(() => {
+  return db.query('SELECT * FROM articles WHERE article_id = 8;')
+  .then(({rows : article, rowCount}) => {
+    console.log(article);
+    expect(rowCount).toBe(0);
+  });
+})
+})
+
+it("Responds with 404 status code if request includes an article_id which does not exist in the database.", () => {
+return request(app)
+.delete('/api/articles/54')
+.expect(404)
+.then(({ body : { msg }}) => {
+  expect(msg).toBe("Resource not found.")
+});
+})
+
+it("Responds with 400 status code if client attempts to delete an article whose primary key is referenced by another table (comments).", () => {
+return request(app)
+.delete('/api/articles/9')
+.expect(400)
+.then(({ body : { msg }}) => {
+  expect(msg).toBe("Resource cannot be deleted.")
+});
+})
+})
+//one more test for invalid id!

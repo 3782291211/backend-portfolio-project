@@ -1,3 +1,5 @@
+const { deleteArticleById } = require("../models/news.models");
+
 exports.invalidPath = (req, res) => 
   res.status(404).send({msg: "Path not found."});
 
@@ -8,7 +10,9 @@ exports.handlePSQLerrors = (err, req, res,next) =>
 
 exports.handleForeignKeyError = (err, req, res,next) => {
   if (err.code === '23503') {
-    if(err.detail.includes('article')) {
+    if (req.method === 'DELETE') {
+       res.status(400).send({msg: 'Resource cannot be deleted.'})
+    } else if(err.detail.includes('article')) {
        res.status(404).send({msg: 'Article not found.'});
     } else if (err.detail.includes('author')) {
       res.status(404).send({msg: 'User not found.'});
