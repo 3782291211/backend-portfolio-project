@@ -7,8 +7,9 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
- return Promise.all([
-     selectArticles(req.query),
+  const { sort_by , order , topic } = req.query;
+  return Promise.all([
+     selectArticles(sort_by, order, topic),
      checkValueExists('slug', 'topics', req.query.topic)
   ]).then(([articles]) => {
     res.status(200).send({articles});

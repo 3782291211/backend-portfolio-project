@@ -5,13 +5,13 @@ exports.selectTopics = () => {
   .then(({rows : topics}) => topics);
 };
 
-exports.selectArticles = queryObj => {  
-  const sort_by = queryObj.sort_by ? queryObj.sort_by : 'created_at';
-  const order = queryObj.order ? queryObj.order : 'DESC';
+exports.selectArticles = (sort_by = 'created_at' , order = 'DESC', topic) => {  
   const validParameters= ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count'];
   
-  if(!validParameters.includes(sort_by) || !/^ASC$|^DESC$/i.test(order)) {
+  if(!validParameters.includes(sort_by)) {
     return Promise.reject({status: 400, msg: 'Invalid sort query.'});
+  } else if (!/^ASC$|^DESC$/i.test(order)) {
+    return Promise.reject({status: 400, msg: 'Invalid order query.'});
   };
   
   let queryString = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, COUNT(comment_id) ::INTEGER AS comment_count
@@ -21,8 +21,8 @@ exports.selectArticles = queryObj => {
 
   const queryParameters = [];
   
-  if (queryObj.topic) {
-    queryParameters.push(queryObj.topic);
+  if (topic) {
+    queryParameters.push(topic);
     queryString += 'WHERE topic = $1 ';
   };
 

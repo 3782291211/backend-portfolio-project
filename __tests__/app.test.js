@@ -144,7 +144,7 @@ it("Returns 404 status code if client makes a request on a path that contains an
   .get('/api/articles/44/comments')
   .expect(404)
   .then(({body : {msg}}) => {
-     expect(msg).toBe("article_id not found.");
+     expect(msg).toBe("Resource not found.");
   })
 })
 
@@ -203,7 +203,7 @@ it("Returns 400 status code if username specified in request body does not refer
   .send({username: "Racetrack", body: "Where did he go?"})
   .expect(404)
   .then(({ body : { msg }}) => {
-    expect(msg).toBe("author not found.");
+    expect(msg).toBe("Username not found.");
   });
 })
   
@@ -223,7 +223,7 @@ it("Returns 400 if article_id parameter does not reference an existing article i
   .send({username : "lurker", body: "Engulfed by a sea of neon lights."})
   .expect(404)
   .then(({body : {msg}}) => {
-    expect(msg).toBe("article not found.");
+    expect(msg).toBe("Article not found.");
   });
 })
 
@@ -402,6 +402,24 @@ it("Path can utilise multiple queries at once, returning the correct list of art
   })
 })
 
+it("Responds with 400 status code if client's request includes a sort_by query for an invalid column.", () => {
+  return request(app)
+  .get('/api/articles?sort_by=apples')
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe('Invalid sort query.');
+  })
+})
+
+it("Responds with 400 status code if client's request includes an order query which is invalid (i.e. not 'asc' or 'desc').", () => {
+  return request(app)
+  .get('/api/articles?order=29')
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe('Invalid order query.');
+  })
+})
+
 it("Responds with 400 status code if request URL includes query parameters that fail validation.", () => {
   return request(app)
   .get('/api/articles?sort_by=title;%DROP%DATABASE')
@@ -416,7 +434,7 @@ it("Responds with 404 status code if client's request includes a topic query for
   .get('/api/articles?topic=jump')
   .expect(404)
   .then(({ body : { msg }}) => {
-    expect(msg).toBe('slug not found.');
+    expect(msg).toBe('Resource not found.');
   })
 })
 
