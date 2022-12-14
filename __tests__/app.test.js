@@ -447,3 +447,34 @@ it("Responds with 200 status code and an empty array if client's request include
   })
 })
 })
+
+describe("11) DELETE /api/comments/:comment_id", () => {
+it("Responds with 204 status code and no content, deleting the specified comment from the database.", () => {
+return request(app)
+.delete('/api/comments/9')
+.expect(204)
+.then(() => {
+  return db.query(`SELECT * FROM comments WHERE comment_id = 9;`)
+  .then(({rowCount}) => expect(rowCount).toBe(0));
+})
+})
+
+it("Responds with 404 status code if specified comment_id is valid but does not exist in database.", () => {
+  return request(app)
+  .delete('/api/comments/344')
+  .expect(404)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe('Resource not found.');
+  })
+})
+
+it("Responds with 400 status code if specified comment_id is invalid.", () => {
+  return request(app)
+  .delete('/api/comments/comment_id12')
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe('Invalid data type in URL.');
+  })
+})
+
+})
