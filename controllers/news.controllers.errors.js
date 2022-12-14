@@ -7,11 +7,12 @@ exports.handlePSQLerrors = (err, req, res,next) =>
   : next(err);
 
 exports.handleForeignKeyError = (err, req, res,next) => {
-  err.code === '23503' ? 
-    err.detail.includes('article') ? res.status(404).send({msg: "Article not found."})
-    : err.detail.includes('author') ? res.status(404).send({msg: "Username not found."})
-    : res.status(404).send({msg: "Resource not found."})
-  : next(err);
+  if (err.code === '23503') {
+     const columnName = err.detail.match(/\(([a-zA-Z]+)/)[1];
+     res.status(404).send({msg: `${columnName} not found.`})
+  } else {
+    next(err);
+  }
 };
 
 exports.handleCustomErrors = (err, req, res, next) =>

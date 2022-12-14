@@ -144,7 +144,7 @@ it("Returns 404 status code if client makes a request on a path that contains an
   .get('/api/articles/44/comments')
   .expect(404)
   .then(({body : {msg}}) => {
-     expect(msg).toBe("Article not found.");
+     expect(msg).toBe("article_id not found.");
   })
 })
 
@@ -203,7 +203,7 @@ it("Returns 400 status code if username specified in request body does not refer
   .send({username: "Racetrack", body: "Where did he go?"})
   .expect(404)
   .then(({ body : { msg }}) => {
-    expect(msg).toBe("Username not found.");
+    expect(msg).toBe("author not found.");
   });
 })
   
@@ -223,7 +223,7 @@ it("Returns 400 if article_id parameter does not reference an existing article i
   .send({username : "lurker", body: "Engulfed by a sea of neon lights."})
   .expect(404)
   .then(({body : {msg}}) => {
-    expect(msg).toBe("Article not found.");
+    expect(msg).toBe("article not found.");
   });
 })
 
@@ -346,9 +346,9 @@ describe("9) GET /api/articles/:article_id (comment count)", () => {
     });
   })
   })
-  })
+})
   
-describe.only("10) GET /api/articles (queries)", () => {
+describe("10) GET /api/articles (queries)", () => {
 it("Path includes a query which filters articles by topic, responding with a 200 status code and a filtered list of articles", () => {
 return request(app)
 .get('/api/articles?topic=mitch')
@@ -416,7 +416,7 @@ it("Responds with 404 status code if client's request includes a topic query for
   .get('/api/articles?topic=jump')
   .expect(404)
   .then(({ body : { msg }}) => {
-    expect(msg).toBe('Topic not found.');
+    expect(msg).toBe('slug not found.');
   })
 })
 
