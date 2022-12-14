@@ -1,4 +1,4 @@
-const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers} = require('../models/news.models');
+const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById} = require('../models/news.models');
 const {checkValueExists} = require('../models/utility-queries.models');
 
 exports.getTopics = (req, res, next) => {
@@ -48,4 +48,14 @@ exports.getUsers = (req, res) => {
   selectUsers()
   .then(users => res.status(200).send({users}))
   .catch(err => next(err));
+};
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+return Promise.all ([
+  checkValueExists('comment_id', 'comments', comment_id),
+  deleteCommentById(comment_id)
+])
+.then(() => res.sendStatus(204))
+.catch(err => next(err));
 };

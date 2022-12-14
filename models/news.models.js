@@ -76,3 +76,6 @@ exports.updateArticleVotes = (articleId, incVotes) => {
 
 exports.selectUsers = () => 
   db.query(`SELECT * FROM users;`).then(({rows: users}) => users);
+
+exports.deleteCommentById = commentId => 
+  db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, [commentId]);

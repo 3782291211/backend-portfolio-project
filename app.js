@@ -7,6 +7,7 @@ app.use(express.json());
 app.use(apiRouter);
 
 app.all('*', invalidPath);
+
 app.use(handlePSQLerrors);
 app.use(handleForeignKeyError);
 app.use(handleCustomErrors);
