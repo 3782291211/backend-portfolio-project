@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const fs = require('fs/promises');
 
 exports.selectTopics = () => {
   return db.query(`SELECT * FROM topics;`)
@@ -79,3 +80,6 @@ exports.selectUsers = () =>
 
 exports.deleteCommentById = commentId => 
   db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, [commentId]);
+
+exports.readJSONFile = () =>
+  fs.readFile(`${__dirname}/../endpoints.json`, 'utf8').then(endpoints => JSON.parse(endpoints));
