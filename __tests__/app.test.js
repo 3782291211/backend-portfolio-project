@@ -103,7 +103,7 @@ return request(app)
 .get('/api/articles/2l')
 .expect(400)
 .then(({body : {msg}}) => {
-  expect(msg).toBe("Invalid data type in URL.");
+  expect(msg).toBe("Request contains invalid data type.");
   })
 })
 })
@@ -162,7 +162,7 @@ it("Returns 400 status code if client makes a request on a path that contains an
   .get('/api/articles/1l/comments')
   .expect(400)
   .then(({body : {msg}}) => {
-    expect(msg).toBe("Invalid data type in URL.");
+    expect(msg).toBe("Request contains invalid data type.");
   })
 })
 
@@ -203,7 +203,7 @@ it("Returns 400 status code if username specified in request body does not refer
   .send({username: "Racetrack", body: "Where did he go?"})
   .expect(404)
   .then(({ body : { msg }}) => {
-    expect(msg).toBe("Username not found.");
+    expect(msg).toBe("User not found.");
   });
 })
   
@@ -233,7 +233,7 @@ it("Returns 400 status code if response URL includes an invalid article_id.", ()
   .send({username : "lurker", body: "Engulfed by a sea of neon lights."})
   .expect(400)
   .then(({body : {msg}}) => {
-    expect(msg).toBe("Invalid data type in URL.");
+    expect(msg).toBe("Request contains invalid data type.");
   });
 })
   
@@ -286,7 +286,7 @@ describe("7) PATCH /api/articles/:article_id", () => {
     .send({ inc_votes: "six" })
     .expect(400)
     .then(({body: {msg}}) => {
-      expect(msg).toBe('Invalid data type in URL.')
+      expect(msg).toBe('Request contains invalid data type.')
   })
   })
   
@@ -306,7 +306,7 @@ describe("7) PATCH /api/articles/:article_id", () => {
     .send({ inc_votes: 54 })
     .expect(400)
     .then(({body : {msg}}) => {
-      expect(msg).toBe('Invalid data type in URL.');
+      expect(msg).toBe('Request contains invalid data type.');
     })
   })
 })
@@ -459,7 +459,7 @@ return request(app)
 })
 })
 
-it("Responds with 404 status code if specified comment_id is valid but does not exist in database.", () => {
+it("Responds with 404 status code if specified comment_id does not exist in database.", () => {
   return request(app)
   .delete('/api/comments/344')
   .expect(404)
@@ -473,7 +473,7 @@ it("Responds with 400 status code if specified comment_id is invalid.", () => {
   .delete('/api/comments/comment_id12')
   .expect(400)
   .then(({ body : { msg }}) => {
-    expect(msg).toBe('Invalid data type in URL.');
+    expect(msg).toBe('Request contains invalid data type.');
   })
 })
 
@@ -501,3 +501,169 @@ it("Responds with 200 status code and returns a JSON string containing all avail
   })
 });
 })
+
+describe("13) GET /api/users/:username", () => {
+it("Responds with 200 status code and a user object with a username, avatar_url and name.", () => {
+  return request(app)
+  .get('/api/users/rogersop')
+  .expect(200)
+  .then(({body : {user}}) => {
+    expect(user).toEqual(
+      expect.objectContaining({
+        username: 'rogersop',
+        avatar_url: expect.any(String),
+        name: 'paul'
+      })
+    )
+  });
+})
+
+it("Responds with 404 status code if a request is made with a username which does not exist in the database.", () => {
+  return request(app)
+  .get('/api/users/123')
+  .expect(404)
+  .then(({body : { msg }}) => {
+    expect(msg).toBe('Username not found.');
+  })
+})
+
+})
+
+describe("14) PATCH /api/comments/:comment_id", () => {
+it("Responds with 201 status code and enables client to update the votes property of a specific comment, returning that comment in the response.", () => {
+return request(app)
+.patch('/api/comments/4')
+.send({inc_votes : 73})
+.expect(200)
+.then(({ body : {comment}}) => {
+  expect(comment).toEqual(
+    expect.objectContaining({
+      comment_id: 4,
+      body: expect.any(String),
+      article_id: expect.any(Number),
+      author: expect.any(String),
+      votes: -27,
+      created_at: expect.any(String)
+    })
+  )
+})
+})
+
+it("Responds with 404 status code if a request is made with a comment_id which does not exist in the database.", () => {
+  return request(app)
+  .patch('/api/comments/22')
+  .send({inc_votes : -23})
+  .expect(404)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Resource not found.");
+  })
+})
+
+it("Returns 400 status code if a request is made with a comment_id of the wrong data type.", () => {
+  return request(app)
+  .patch('/api/comments/comment4')
+  .send({inc_votes : -23})
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Request contains invalid data type.")
+  })
+})
+
+it("Returns 400 status code if a request body uses incorrect data type for votes", () => {
+  return request(app)
+  .patch('/api/comments/7')
+  .send({inc_votes : "hello"})
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Request contains invalid data type.")
+  })
+})
+
+it("Returns 400 status code if a request body is malformed.", () => {
+  return request(app)
+  .patch('/api/comments/7')
+  .send({inc_vo : 8})
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Bad request.")
+  })
+})
+})
+
+describe("15) POST /api/articles", () => {
+it("Returns 201 status code and adds new article to database, responding with the newly added article.", () => {
+  const article = {
+    author: 'butter_bridge',
+    title: 'Cloud spiller sighted',
+    body: 'Well, I went down to the water, just to wipe my brow.',
+    topic: 'paper'
+  }
+  return request(app)
+  .post('/api/articles')
+  .send(article)
+  .expect(201)
+  .then(({ body : { article }}) => {
+    expect(article).toEqual(
+      expect.objectContaining({
+        article_id: 13,
+        title: expect.any(String),
+        topic: expect.any(String),
+        author: expect.any(String),
+        body: expect.any(String),
+        created_at: expect.any(String),
+        votes: expect.any(Number),
+        comment_count: expect.any(Number)
+      })
+    )
+  });
+})
+
+it("Responds with 400 status code if request body is malformed", () => {
+  const article = {
+    author: 'butter_bridge',
+    title: 'Cloud spiller sighted',
+    topic: 'paper'
+  }
+  return request(app)
+  .post('/api/articles')
+  .send(article)
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Bad request.");
+  })
+})
+
+it("Responds with 404 status code if author specified in request body does not exist in the database.", () => {
+  const article = {
+    author: 'junkerson',
+    title: 'Cloud spiller sighted',
+    body: 'Well, I went down to the water, just to wipe my brow.',
+    topic: 'paper'
+  }
+  return request(app)
+  .post('/api/articles')
+  .send(article)
+  .expect(404)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("User not found.");
+  })
+})
+
+it("Responds with 404 status code if topic specified in request body does not exist in the database.", () => {
+  const article = {
+    author: 'butter_bridge',
+    title: 'Cloud spiller sighted',
+    body: 'Well, I went down to the water, just to wipe my brow.',
+    topic: 'plain'
+  }
+  return request(app)
+  .post('/api/articles')
+  .send(article)
+  .expect(404)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Resource not found.");
+  })
+})
+
+})
+

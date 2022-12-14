@@ -83,3 +83,29 @@ exports.deleteCommentById = commentId =>
 
 exports.readJSONFile = () =>
   fs.readFile(`${__dirname}/../endpoints.json`, 'utf8').then(endpoints => JSON.parse(endpoints));
+
+exports.selectUserById = username => 
+  db.query(`SELECT * FROM users WHERE username = $1;`, [username])
+  .then(({rows : users, rowCount}) => 
+  rowCount === 0 ? Promise.reject({status: 404, msg : "Username not found."}) : users[0]);
+
+exports.updateCommentVotes = (commentId, incVotes) => {
+  return db.query(`
+  UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;
+  `, [incVotes, commentId])
+  .then(({rows: comment, rowCount}) =>
+  rowCount === 0 ? Promise.reject({status: 404, msg: "Comment not found."}) : comment[0]);
+};
+
+exports.insertArticle = article => {
+  const { author, title, body, topic } = article;
+  return db.query(`
+  INSERT INTO articles (title, topic, author, body) 
+  VALUES ($1, $2, $3, $4) RETURNING *;
+  `, [title, topic, author, body])
+  .then(({rows : article}) => {
+    article[0].comment_count = 0;
+    return article[0];
+  });
+};
+

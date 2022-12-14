@@ -1,4 +1,4 @@
-const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile} = require('../models/news.models');
+const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile, selectUserById, updateCommentVotes, insertArticle} = require('../models/news.models');
 const {checkValueExists} = require('../models/utility-queries.models');
 
 exports.getTopics = (req, res, next) => {
@@ -39,7 +39,8 @@ exports.postComment = (req, res, next) => {
 };
 
 exports.patchArticleVotes = (req, res, next) => {
-  updateArticleVotes(req.params.article_id, req.body.inc_votes)
+  const { article_id} = req.params;
+  updateArticleVotes(article_id, req.body.inc_votes)
   .then(article => res.status(200).send({article}))
   .catch(err => next(err));
 };
@@ -63,5 +64,29 @@ return Promise.all ([
 exports.getJSONendpoints = (req, res, next) => {
   readJSONFile()
   .then(endpoints => res.status(200).send(endpoints))
+  .catch(err => next(err));
+};
+
+exports.getUserById = (req, res, next) => {
+  const { username } = req.params;
+  selectUserById(username)
+  .then(user => res.status(200).send({user}))
+  .catch(err => next(err));
+}
+
+exports.patchCommentVotes = (req, res, next) => {
+  const {comment_id} = req.params;
+  const incVotes = req.body.inc_votes;
+
+  return Promise.all([
+    checkValueExists('comment_id', 'comments', comment_id),
+    updateCommentVotes(comment_id, incVotes)
+  ]).then(([prom1, comment]) => res.status(200).send({comment}))
+  .catch(err => next(err));
+};
+
+exports.postArticle = (req, res, next) => {
+  insertArticle(req.body)
+  .then(article => res.status(201).send({article}))
   .catch(err => next(err));
 };
