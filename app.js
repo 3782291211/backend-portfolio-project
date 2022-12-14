@@ -4,7 +4,7 @@ const {invalidPath, handlePSQLerrors, handleForeignKeyError, handleCustomErrors,
 const app = express();
 
 app.use(express.json());
-app.use('/api', apiRouter);
+app.use(apiRouter);
 
 app.all('*', invalidPath);
 app.use(handlePSQLerrors);

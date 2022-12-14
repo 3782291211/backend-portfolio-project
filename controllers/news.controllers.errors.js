@@ -7,11 +7,17 @@ exports.handlePSQLerrors = (err, req, res,next) =>
   : next(err);
 
 exports.handleForeignKeyError = (err, req, res,next) => {
-  err.code === '23503' ? 
-    err.detail.includes('article') ? res.status(404).send({msg: "Article not found."})
-    : err.detail.includes('author') ? res.status(404).send({msg: "Username not found."})
-    : res.status(404).send({msg: "Resource not found."})
-  : next(err);
+  if (err.code === '23503') {
+    if(err.detail.includes('article')) {
+       res.status(404).send({msg: 'Article not found.'});
+    } else if (err.detail.includes('author')) {
+      res.status(404).send({msg: 'Username not found.'});
+    } else {
+      res.status(404).send({msg: 'Resource not found.'});
+    }
+  } else {
+    next(err);
+  }
 };
 
 exports.handleCustomErrors = (err, req, res, next) =>

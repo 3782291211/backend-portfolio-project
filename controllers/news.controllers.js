@@ -1,5 +1,5 @@
 const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers} = require('../models/news.models');
-const {checkIdExists} = require('../models/utility-queries.models');
+const {checkValueExists} = require('../models/utility-queries.models');
 
 exports.getTopics = (req, res, next) => {
   selectTopics().then(topics => res.status(200).send({topics}))
@@ -7,9 +7,14 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  selectArticles().then(articles => res.status(200).send({articles}))
-  .catch(err => next(err));
-}
+  const { sort_by , order , topic } = req.query;
+  return Promise.all([
+     selectArticles(sort_by, order, topic),
+     checkValueExists('slug', 'topics', req.query.topic)
+  ]).then(([articles]) => {
+    res.status(200).send({articles});
+  }).catch(err => next(err));
+};
 
 exports.getArticleById = (req, res, next) => {
   selectArticleById(req.params.article_id)
@@ -21,7 +26,7 @@ exports.getCommentsByArticle = (req, res, next) => {
   const { article_id } = req.params; 
   return Promise.all([
     selectCommentsByArticle(article_id),
-    checkIdExists(article_id)
+    checkValueExists('article_id', 'articles', article_id)
   ])
   .then(([comments]) => res.status(200).send({comments}))
   .catch(err => next(err));

@@ -4,8 +4,8 @@ const usersRouter = require('./users-router');
 
 const articlesRouter = require('./articles-router');
 
-apiRouter.use('/topics', topicsRouter);
-apiRouter.use('/articles', articlesRouter);
-apiRouter.use('/users', usersRouter);
+apiRouter.use('/api/topics', topicsRouter);
+apiRouter.use('/api/articles', articlesRouter);
+apiRouter.use('/api/users', usersRouter);
 
 module.exports = apiRouter;
