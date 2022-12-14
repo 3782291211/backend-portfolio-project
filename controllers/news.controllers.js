@@ -56,6 +56,6 @@ return Promise.all ([
   checkValueExists('comment_id', 'comments', comment_id),
   deleteCommentById(comment_id)
 ])
-.then(() => res.status(204).send())
+.then(() => res.sendStatus(204))
 .catch(err => next(err));
 };
