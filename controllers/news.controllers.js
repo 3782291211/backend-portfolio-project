@@ -1,4 +1,4 @@
-const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById} = require('../models/news.models');
+const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile} = require('../models/news.models');
 const {checkValueExists} = require('../models/utility-queries.models');
 
 exports.getTopics = (req, res, next) => {
@@ -44,7 +44,7 @@ exports.patchArticleVotes = (req, res, next) => {
   .catch(err => next(err));
 };
 
-exports.getUsers = (req, res) => {
+exports.getUsers = (req, res, next) => {
   selectUsers()
   .then(users => res.status(200).send({users}))
   .catch(err => next(err));
@@ -58,4 +58,10 @@ return Promise.all ([
 ])
 .then(() => res.sendStatus(204))
 .catch(err => next(err));
+};
+
+exports.getJSONendpoints = (req, res, next) => {
+  readJSONFile()
+  .then(endpoints => res.status(200).send(endpoints))
+  .catch(err => next(err));
 };

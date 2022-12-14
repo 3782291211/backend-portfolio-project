@@ -478,3 +478,26 @@ it("Responds with 400 status code if specified comment_id is invalid.", () => {
 })
 
 })
+
+describe("12) GET /api", () => {
+it("Responds with 200 status code and returns a JSON string containing all available endpoints.", () => {
+  return request(app)
+  .get('/api')
+  .expect(200)
+  .then(({body}) => {
+    expect(body["summary of all endpoints available on this API"]).toEqual(
+      expect.objectContaining({
+        "GET /api": expect.any(Object),
+        "GET /api/topics": expect.any(Object),
+        "GET /api/articles": expect.any(Object),
+        "GET /api/articles/:article_id": expect.any(Object),
+        "GET /api/articles/:article_id/comments": expect.any(Object),
+        "POST /api/articles/:article_id/comments": expect.any(Object),
+        "PATCH /api/articles/:article_id": expect.any(Object),
+        "GET /api/users": expect.any(Object),
+        "DELETE /api/comments/:comment_id": expect.any(Object)
+      })
+    )
+  })
+});
+})

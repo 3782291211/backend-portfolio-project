@@ -1,27 +1,98 @@
-{
+{ "summary of all endpoints available on this API" : {
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
-    "queries": [],
+    "description": "responds with an array of all topics",
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "responds with an array of all topics",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
+          "title": "Mob attacks McDonald's restaurant for not serving breakfast after 10am.",
           "topic": "cooking",
-          "author": "weegembump",
+          "author": "axXXyJuniOr$#$$£",
           "body": "Text from the article..",
           "created_at": 1527695953341
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id" : {
+    "description": "responds with the article object specified in the request URL",
+    "exampleResponse": {
+        "article": {
+          "author": "icellusedkars",
+          "title": "Does Mitch predate civilisation?",
+          "article_id": 8,
+          "body": "Latest projections place the total rainfall at ...",
+          "topic": "mitch",
+          "created_at": "2020-04-17T01:08:00.000Z",
+          "votes": 0,
+          "comment_count": 0
+        }
+      }
+  },
+  "GET /api/articles/:article_id/comments" : {
+    "description": "responds with an array of comments for the article specified in the request URL",
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 15,
+          "votes": 1,
+          "created_at": "2020-11-24T00:08:00.000Z",
+          "author": "butter_bridge",
+          "body": "I am 100% sure that we're not completely sure."
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments" : {
+    "description": "enables client to add a new comment to the database and returns the new entry",
+    "exampleResponse":  {
+        "new_comment": {
+          "comment_id": 19,
+          "body": "To listen requires a voice, for what needs to be known requires us to ask.",
+          "article_id": 4,
+          "author": "lurker",
+          "votes": 0,
+          "created_at": "2022-12-13T23:48:47.617Z"
+        }
+      }
+  },
+  "PATCH /api/articles/:article_id" : {
+    "description": "enables client to update the number of votes on a specified article and returns the updated article",
+    "exampleResponse":  {
+        "article": {
+          "article_id": 7,
+          "title": "Z",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "body": "I was hungry.",
+          "created_at": "2020-01-07T14:08:00.000Z",
+          "votes": 23
+        }
+    }
+  },
+  "GET /api/users": {
+    "description": "responds with an array of all users",
+    "exampleResponse": {
+        "users": [
+          {
+            "username": "butter_bridge",
+            "name": "jonny",
+            "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+          }
+        ]
+      }
+  },
+  "DELETE /api/comments/:comment_id" : {
+    "description": "enables client to delete a comment from the database by specifying its comment_id in the URL"
   }
+}
 }
