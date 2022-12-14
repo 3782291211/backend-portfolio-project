@@ -7,12 +7,12 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by , order , topic } = req.query;
+  const { sort_by , order , limit , topic } = req.query;
   return Promise.all([
-     selectArticles(sort_by, order, topic),
+     selectArticles(sort_by, order, limit, topic),
      checkValueExists('slug', 'topics', req.query.topic)
   ]).then(([articles]) => {
-    res.status(200).send({articles});
+    res.status(200).send(articles);
   }).catch(err => next(err));
 };
 

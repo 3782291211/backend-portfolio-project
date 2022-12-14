@@ -6,7 +6,7 @@ exports.selectTopics = () => {
   .then(({rows : topics}) => topics);
 };
 
-exports.selectArticles = (sort_by = 'created_at' , order = 'DESC', topic) => {  
+exports.selectArticles = (sort_by = 'created_at' , order = 'DESC', limit = 10, topic) => {  
   const validParameters= ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count'];
   
   if(!validParameters.includes(sort_by)) {
@@ -20,16 +20,18 @@ exports.selectArticles = (sort_by = 'created_at' , order = 'DESC', topic) => {
   LEFT OUTER JOIN comments
   ON articles.article_id = comments.article_id `;
 
-  const queryParameters = [];
+  const queryParameters = [limit];
   
   if (topic) {
     queryParameters.push(topic);
-    queryString += 'WHERE topic = $1 ';
+    queryString += 'WHERE topic = $2 ';
   };
 
-  queryString += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`
+  queryString += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order} LIMIT $1;`
   
-  return db.query(queryString, queryParameters).then(({rows: articles}) => articles);
+  return db.query(queryString, queryParameters).then(({rows, rowCount}) => {
+    return {articles: rows, total_count: rowCount, page_limit: limit};
+  });
 };
 
 exports.selectArticleById = articleId => {

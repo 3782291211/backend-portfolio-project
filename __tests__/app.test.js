@@ -42,12 +42,12 @@ topics.forEach(topic => {
 })
 
 describe("3) GET /api/articles", () => {
-it("Responds with 200 status code and an array of article objects sorted by descending date order, each object having a comment_count property with the correct number of comments for that article.", () => {
+it("Responds with 200 status code and an array of article objects sorted by descending date order, each object having a comment_count property with the correct number of comments for that article. Default page length is 10 articles.", () => {
 return request(app)
 .get('/api/articles')
 .expect(200)
 .then(({body : {articles}}) => {
-  expect(articles).toHaveLength(12);
+  expect(articles).toHaveLength(10);
   expect(articles).toBeSortedBy('created_at', { descending: true });
   articles.forEach(article => {
     if(article.article_id === 1) {
@@ -354,7 +354,7 @@ return request(app)
 .get('/api/articles?topic=mitch')
 .expect(200)
 .then(({body: {articles}}) => {
-  expect(articles).toHaveLength(11);
+  expect(articles).toHaveLength(10);
 }).then(()=>{
    return request(app)
    .get('/api/articles?topic=cats')
@@ -366,7 +366,7 @@ return request(app)
 
 })
 
-it("Path includes a query which filters articles by column, responding with a 200 status code and a filtered list of articles. In the absence of an order query, the default sort order is descending.", () => {
+it("Path includes a query which sorts articles by column, responding with a 200 status code and a sorted list of articles. In the absence of an order query, the default sort order is descending.", () => {
   return request(app)
   .get('/api/articles?sort_by=author')
   .expect(200)
@@ -396,7 +396,7 @@ it("Path can utilise multiple queries at once, returning the correct list of art
   .get('/api/articles?sort_by=title&order=asc&topic=mitch')
   .expect(200)
   .then(({body: {articles}}) => {
-    expect(articles).toHaveLength(11);
+    expect(articles).toHaveLength(10);
     expect(articles).toBeSortedBy('title', { ascending : true });
     articles.forEach(article => expect(article.topic).toBe('mitch'));
   })
@@ -667,3 +667,29 @@ it("Responds with 404 status code if topic specified in request body does not ex
 
 })
 
+describe("16) GET api/articles (pagination queries)", () => {
+it("Endpoint accepts a limit query, responding with 200 status and as many articles as specified in the query.", () => {
+  return request(app)
+  .get('/api/articles?limit=7')
+  .expect(200)
+  .then(({ body : { articles }}) => {
+    expect(articles).toHaveLength(7);
+  })
+})
+
+it("Response returns an object which also has a total_count property, displaying the total number of returned articles (either defaults to 10, or is equal to the limit query value).", () => {
+  return request(app)
+  .get('/api/articles?limit=8')
+  .expect(200)
+  .then(({ body : { articles, total_count }}) => {
+    expect(articles).toHaveLength(8);
+    expect(total_count).toBe(8);
+  })
+})
+})
+/*implement pagination functionality on our /api/articles endpoint.
+
+Should accepts the following queries:
+limit, which limits the number of responses (defaults to 10)
+p, stands for page which specifies the page at which to start (calculated using limit)
+add a total_count property, displaying the total number of articles (this should display the total number of articles with any filters applied, discounting the limit)*/

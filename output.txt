@@ -62,52 +62,21 @@ You are now connected to database "nc_news" as user "g398g361".
 
 
  
- articles with comment count 
+ articles with comment count AND LIMIT 
 
-    author    |                                         title                                         | article_id |  topic   |         created_at         | votes | comment_count 
---------------+---------------------------------------------------------------------------------------+------------+----------+----------------------------+-------+---------------
- happyamy2016 | High Altitude Cooking                                                                 |         28 | cooking  | 2020-01-04 00:24:00        |     0 |             5
- tickle122    | A BRIEF HISTORY OF FOOD—NO BIG DEAL                                                   |         29 | cooking  | 2020-01-06 20:12:00        |     0 |            10
- jessjelly    | Twice-Baked Butternut Squash Is the Thanksgiving Side Dish of Your Dreams             |         30 | cooking  | 2020-01-11 20:20:00        |     0 |             8
- grumpy19     | Thanksgiving Drinks for Everyone                                                      |         27 | cooking  | 2020-01-24 23:22:00        |     0 |            13
- happyamy2016 | 22 Amazing open source React projects                                                 |          3 | coding   | 2020-02-29 11:12:00        |     0 |            10
- tickle122    | The vegan carnivore?                                                                  |         36 | cooking  | 2020-03-09 21:21:00        |     0 |             6
- tickle122    | History of Football                                                                   |         20 | football | 2020-03-10 21:05:00        |     0 |             5
- weegembump   | Sweet potato & butternut squash soup with lemon & garlic toast                        |         25 | cooking  | 2020-03-11 21:16:00        |     0 |             4
- tickle122    | Why do England managers keep making the same mistakes?                                |         15 | football | 2020-03-19 00:14:00        |     0 |             4
- cooljmessy   | Which current Premier League manager was the best player?                             |         17 | football | 2020-03-19 11:15:00        |     0 |            12
- weegembump   | Sunday league football                                                                |         23 | football | 2020-03-22 14:25:00        |     0 |            14
- weegembump   | HOW COOKING HAS CHANGED US                                                            |         26 | cooking  | 2020-04-06 01:00:00        |     0 |            11
- tickle122    | Defensive Metrics: Measuring the Intensity of a High Press                            |         22 | football | 2020-04-17 13:10:00        |     0 |             8
- jessjelly    | Please stop worrying about Angular 3                                                  |          5 | coding   | 2020-04-21 17:06:00        |     0 |             6
- jessjelly    | The Rise Of Thinking Machines: How IBM's Watson Takes On The World                    |          2 | coding   | 2020-05-14 01:02:00        |     0 |             6
- cooljmessy   | Stone Soup                                                                            |         35 | cooking  | 2020-05-26 07:25:00        |     0 |            14
- grumpy19     | Learn HTML5, CSS3, and Responsive WebSite Design in One Go                            |          9 | coding   | 2020-05-26 15:06:00        |     0 |             8
- tickle122    | What to Cook This Week                                                                |         31 | cooking  | 2020-06-09 03:19:00        |     0 |            12
- grumpy19     | Halal food: Keeping pure and true                                                     |         32 | cooking  | 2020-06-18 21:08:00        |     0 |             5
- happyamy2016 | Who Will Manage Your Club in 2021?                                                    |         14 | football | 2020-06-24 15:14:00        |     0 |             3
- cooljmessy   | An Introduction to JavaScript Object Notation (JSON) in JavaScript and .NET           |         10 | coding   | 2020-07-02 12:23:00        |     0 |             8
- tickle122    | Designing Better JavaScript APIs                                                      |         11 | coding   | 2020-07-07 00:13:00        |     0 |             5
- weegembump   | What does Jose Mourinho's handwriting say about his personality?                      |         13 | football | 2020-07-08 20:25:00        |     0 |             6
- jessjelly    | Game of talents: management lessons from top football coaches                         |         24 | football | 2020-07-09 23:14:00        |     0 |             5
- weegembump   | History of FC Barcelona                                                               |         16 | football | 2020-08-03 00:14:00        |     0 |            16
- grumpy19     | The People Tracking Every Touch, Pass And Tackle in the World Cup                     |         18 | football | 2020-08-17 15:03:00        |     0 |             8
- jessjelly    | Making sense of Redux                                                                 |          4 | coding   | 2020-09-11 21:12:00        |     0 |             9
- jessjelly    | Who are the most followed clubs and players on Instagram?                             |         19 | football | 2020-09-13 13:02:00        |     0 |            13
- weegembump   | Seafood substitutions are increasing                                                  |         33 | cooking  | 2020-09-16 17:26:00        |     0 |             6
- cooljmessy   | Express.js: A Server-Side JavaScript Framework                                        |          8 | coding   | 2020-10-05 23:23:00        |     0 |             7
- tickle122    | Using React Native: One Year Later                                                    |          7 | coding   | 2020-10-18 01:26:00        |     0 |             8
- tickle122    | Agility Training Drills For Football Players                                          |         21 | football | 2020-10-26 10:05:00        |     0 |             8
- jessjelly    | Running a Node App                                                                    |          1 | coding   | 2020-11-07 06:03:00        |     0 |             8
- grumpy19     | JavaScript’s Apply, Call, and Bind Methods are Essential for JavaScript Professionals |          6 | coding   | 2020-11-11 15:09:00        |     0 |            11
- tickle122    | The battle for Node.js security has only begun                                        |         12 | coding   | 2020-11-15 13:25:00        |     0 |             7
- grumpy19     | The Notorious MSG’s Unlikely Formula For Success                                      |         34 | cooking  | 2020-11-22 11:13:00        |     0 |            11
- grumpy19     | Welcome to Fat City                                                                   |         37 | coding   | 2022-12-14 15:57:15.594986 |     0 |             0
- grumpy19     | Welcome to Fat City                                                                   |         38 | coding   | 2022-12-14 15:58:42.616091 |     0 |             0
- grumpy19     | Welcome to Fat City                                                                   |         39 | coding   | 2022-12-14 16:11:38.797728 |     0 |             0
- grumpy19     | Welcome to Fat City                                                                   |         40 | coding   | 2022-12-14 16:12:11.550961 |     0 |             0
- grumpy19     | Welcome to Fat City                                                                   |         42 | coding   | 2022-12-14 16:15:06.195043 |     0 |             0
-(41 rows)
+    author    |                                   title                                   | article_id |  topic   |     created_at      | votes | comment_count 
+--------------+---------------------------------------------------------------------------+------------+----------+---------------------+-------+---------------
+ happyamy2016 | High Altitude Cooking                                                     |         28 | cooking  | 2020-01-04 00:24:00 |     0 |             5
+ tickle122    | A BRIEF HISTORY OF FOOD—NO BIG DEAL                                       |         29 | cooking  | 2020-01-06 20:12:00 |     0 |            10
+ jessjelly    | Twice-Baked Butternut Squash Is the Thanksgiving Side Dish of Your Dreams |         30 | cooking  | 2020-01-11 20:20:00 |     0 |             8
+ grumpy19     | Thanksgiving Drinks for Everyone                                          |         27 | cooking  | 2020-01-24 23:22:00 |     0 |            13
+ happyamy2016 | 22 Amazing open source React projects                                     |          3 | coding   | 2020-02-29 11:12:00 |     0 |            10
+ tickle122    | The vegan carnivore?                                                      |         36 | cooking  | 2020-03-09 21:21:00 |     0 |             6
+ tickle122    | History of Football                                                       |         20 | football | 2020-03-10 21:05:00 |     0 |             5
+ weegembump   | Sweet potato & butternut squash soup with lemon & garlic toast            |         25 | cooking  | 2020-03-11 21:16:00 |     0 |             4
+ tickle122    | Why do England managers keep making the same mistakes?                    |         15 | football | 2020-03-19 00:14:00 |     0 |             4
+ cooljmessy   | Which current Premier League manager was the best player?                 |         17 | football | 2020-03-19 11:15:00 |     0 |            12
+(10 rows)
 
 
  
@@ -115,7 +84,7 @@ You are now connected to database "nc_news" as user "g398g361".
 
  article_id |        title        | topic  |  author  |    body    |         created_at         | votes 
 ------------+---------------------+--------+----------+------------+----------------------------+-------
-         44 | Welcome to Fat City | coding | grumpy19 | Wow oh wow | 2022-12-14 16:15:17.775668 |     0
+         47 | Welcome to Fat City | coding | grumpy19 | Wow oh wow | 2022-12-14 16:57:33.383982 |     0
 (1 row)
 
 INSERT 0 1
