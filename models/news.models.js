@@ -1,12 +1,19 @@
 const db = require('../db/connection');
 const fs = require('fs/promises');
 
-exports.selectTopics = () => {
-  return db.query(`SELECT * FROM topics;`)
-  .then(({rows : topics}) => topics);
-};
 
-exports.selectArticles = (sort_by = 'created_at' , order = 'DESC', limit = 10, topic) => {  
+exports.selectTopics = () => 
+  db.query(`SELECT * FROM topics;`)
+  .then(({rows : topics}) => topics);
+
+
+exports.selectArticles = (
+        sort_by = 'created_at', 
+        order = 'DESC', 
+        limit = 10,
+        page = 1,
+        topic) => {  
+
   const validParameters= ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count'];
   
   if(!validParameters.includes(sort_by)) {
@@ -20,19 +27,20 @@ exports.selectArticles = (sort_by = 'created_at' , order = 'DESC', limit = 10, t
   LEFT OUTER JOIN comments
   ON articles.article_id = comments.article_id `;
 
-  const queryParameters = [limit];
+  const queryParameters = [limit, limit * (page - 1)];
   
   if (topic) {
     queryParameters.push(topic);
-    queryString += 'WHERE topic = $2 ';
+    queryString += 'WHERE topic = $3 ';
   };
 
-  queryString += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order} LIMIT $1;`
+  queryString += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order} LIMIT $1 OFFSET $2;`
   
   return db.query(queryString, queryParameters).then(({rows, rowCount}) => {
-    return {articles: rows, total_count: rowCount, page_limit: limit};
+    return {articles: rows, total_count: rowCount, page: page, page_limit: parseInt(limit)};
   });
 };
+
 
 exports.selectArticleById = articleId => {
   return db.query(`
@@ -46,16 +54,18 @@ exports.selectArticleById = articleId => {
   rowCount === 0 ? Promise.reject({status: 404, msg: "Article not found."}) : article[0]);
 };
 
-exports.selectCommentsByArticle = articleId => {
+
+exports.selectCommentsByArticle = (articleId, limit = 10, page = 1) => {
   return db.query(`
   SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body 
   FROM comments
   JOIN articles
   ON articles.article_id = comments.article_id
   WHERE articles.article_id = $1
-  ORDER BY comments.created_at DESC;
-  `, [articleId]).then(({rows: comments}) => comments);
+  ORDER BY comments.created_at DESC LIMIT $2 OFFSET $3;
+  `, [articleId, limit, limit * (page - 1)]).then(({rows: comments}) => comments);
 };
+
 
 exports.insertComment = (newComment, articleId) => {
   return db.query(`
@@ -65,6 +75,7 @@ exports.insertComment = (newComment, articleId) => {
   `, [newComment.body, articleId, newComment.username])
   .then(({rows : updatedComment}) => updatedComment[0]);
 };
+
 
 exports.updateArticleVotes = (articleId, incVotes) => {
   return db.query(`
@@ -77,19 +88,24 @@ exports.updateArticleVotes = (articleId, incVotes) => {
     : updatedArticle[0]);
 };
 
+
 exports.selectUsers = () => 
   db.query(`SELECT * FROM users;`).then(({rows: users}) => users);
+
 
 exports.deleteCommentById = commentId => 
   db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, [commentId]);
 
+
 exports.readJSONFile = () =>
   fs.readFile(`${__dirname}/../endpoints.json`, 'utf8').then(endpoints => JSON.parse(endpoints));
+
 
 exports.selectUserById = username => 
   db.query(`SELECT * FROM users WHERE username = $1;`, [username])
   .then(({rows : users, rowCount}) => 
   rowCount === 0 ? Promise.reject({status: 404, msg : "Username not found."}) : users[0]);
+
 
 exports.updateCommentVotes = (commentId, incVotes) => {
   return db.query(`
@@ -98,6 +114,7 @@ exports.updateCommentVotes = (commentId, incVotes) => {
   .then(({rows: comment, rowCount}) =>
   rowCount === 0 ? Promise.reject({status: 404, msg: "Comment not found."}) : comment[0]);
 };
+
 
 exports.insertArticle = article => {
   const { author, title, body, topic } = article;
@@ -111,3 +128,10 @@ exports.insertArticle = article => {
   });
 };
 
+exports.insertTopic = (slug, description) => {
+  return db.query(`
+    INSERT INTO topics (slug, description)
+    VALUES ($1, $2)
+    RETURNING *;`, [slug, description])
+    .then(({rows: topic}) => topic[0]);
+};

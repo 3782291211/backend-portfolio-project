@@ -3,12 +3,14 @@ You are now connected to database "nc_news" as user "g398g361".
  
  topics 
 
-   slug   |               description               
-----------+-----------------------------------------
- coding   | Code is love, code is life
- football | FOOTIE!
- cooking  | Hey good looking, what you got cooking?
-(3 rows)
+   slug    |               description               
+-----------+-----------------------------------------
+ coding    | Code is love, code is life
+ football  | FOOTIE!
+ cooking   | Hey good looking, what you got cooking?
+ Jams      | Let's discuss my favourite jams.
+ Creatures | 
+(5 rows)
 
 
  
@@ -82,9 +84,3 @@ You are now connected to database "nc_news" as user "g398g361".
  
  Insert article 
 
- article_id |        title        | topic  |  author  |    body    |         created_at         | votes 
-------------+---------------------+--------+----------+------------+----------------------------+-------
-         47 | Welcome to Fat City | coding | grumpy19 | Wow oh wow | 2022-12-14 16:57:33.383982 |     0
-(1 row)
-
-INSERT 0 1

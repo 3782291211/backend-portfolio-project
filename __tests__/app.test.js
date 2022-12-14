@@ -135,7 +135,7 @@ it("Responds with 200 status code and an array of comments for the given article
   .expect(200)
   .then(({body:{comments}}) => {
     expect(comments).toBeSortedBy('created_at', {descending : true});
-    expect(comments).toHaveLength(11);
+    expect(comments).toHaveLength(10);
   })
 })
 
@@ -668,16 +668,17 @@ it("Responds with 404 status code if topic specified in request body does not ex
 })
 
 describe("16) GET api/articles (pagination queries)", () => {
-it("Endpoint accepts a limit query, responding with 200 status and as many articles as specified in the query.", () => {
+it("Endpoint accepts a limit query, responding with 200 status code and limiting the number of returned articles to the set value.", () => {
   return request(app)
-  .get('/api/articles?limit=7')
+  .get('/api/articles?limit=7&sort_by=article_id&order=asc')
   .expect(200)
   .then(({ body : { articles }}) => {
     expect(articles).toHaveLength(7);
+    expect(articles.map(obj => obj.article_id)).toEqual([1, 2, 3, 4, 5, 6, 7]);
   })
 })
 
-it("Response returns an object which also has a total_count property, displaying the total number of returned articles (either defaults to 10, or is equal to the limit query value).", () => {
+it("Response returns an object which also has a total_count property, displaying the total number of returned articles (this defaults to 10 - see test section 3).", () => {
   return request(app)
   .get('/api/articles?limit=8')
   .expect(200)
@@ -686,10 +687,173 @@ it("Response returns an object which also has a total_count property, displaying
     expect(total_count).toBe(8);
   })
 })
-})
-/*implement pagination functionality on our /api/articles endpoint.
 
-Should accepts the following queries:
-limit, which limits the number of responses (defaults to 10)
-p, stands for page which specifies the page at which to start (calculated using limit)
-add a total_count property, displaying the total number of articles (this should display the total number of articles with any filters applied, discounting the limit)*/
+it("Endpoint accepts a page query, which specifies the set of articles to display for a given request.", () => {
+  return request(app)
+  .get('/api/articles?limit=3&page=4&sort_by=article_id&order=asc')
+  .expect(200)
+  .then(({ body : { articles, total_count }}) => {
+    expect(articles).toHaveLength(3);
+    expect(articles.map(obj => obj.article_id)).toEqual([10, 11, 12]);
+    expect(total_count).toBe(3);
+  })
+})
+
+it("Responds with 200 status code and an empty array if the limit and/or page query exceeds the size of the data set.", () => {
+  return request(app)
+  .get('/api/articles?limit=6&page=5')
+  .expect(200)
+  .then(({ body : { articles, total_count }}) => {
+    expect(articles).toEqual([]);
+    expect(total_count).toBe(0);
+  })
+})
+
+it("Responds with 400 status code if request contains invalid limit query.", () => {
+  return request(app)
+  .get('/api/articles?limit=eight')
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Request contains invalid data type.");
+  })
+})
+
+it("Responds with 400 status code if request contains invalid page query.", () => {
+  return request(app)
+  .get('/api/articles?page=two')
+  .expect(400)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe("Request contains invalid data type.");
+  })
+})
+
+})
+
+describe("17) GET /api/articles/:article_id/comments (pagination)", () => {
+it("Endpoint accepts a limit query which limits the number of responses up to a set value.", () => {
+return request(app)
+.get('/api/articles/1/comments?limit=7')
+.expect(200)
+.then(({ body : { comments }}) => {
+  expect(comments).toHaveLength(7);
+})
+})
+
+it("Responds with 200 status code and an empty array if limit or page query exceed the size of the data set.", () => {
+return request(app)
+.get('/api/articles/9/comments?limit=3&page=2')
+.expect(200)
+.then(({ body : { comments }}) => {
+  expect(comments).toEqual([]);
+})
+})
+
+it("Endpoint responds with 10 comments by default (set by default parameter)", () => {
+return request(app)
+.get('/api/articles/1/comments')
+.expect(200)
+.then(({ body : { comments }}) => {
+  expect(comments).toHaveLength(10);
+})
+})
+
+it("Endpoint accepts a page query which specifies the page of comments to respond with.", () => {
+return request(app)
+.get('/api/articles/1/comments?limit=2&page=3')
+.expect(200)
+.then(({ body : { comments }}) => {
+  expect(comments).toHaveLength(2);
+  expect(comments.map(obj => obj.comment_id)).toEqual([7, 8])
+})
+})
+
+it("Responds with 400 status code if limit query contains invalid value.", () => {
+return request(app)
+.get('/api/articles/1/comments?limit=limit&page=2')
+.expect(400)
+.then(({body : { msg }}) => {
+  expect(msg).toBe("Request contains invalid data type.");
+})
+})
+
+it("Responds with 400 status code if page query contains invalid value.", () => {
+return request(app)
+.get('/api/articles/1/comments?limit=2&page=three')
+.expect(400)
+.then(({body : { msg }}) => {
+  expect(msg).toBe("Request contains invalid data type.");
+})
+})
+
+})
+
+describe("18) POST /api/topics", () => {
+it("Responds with 201 status code, adds a new topic to the database and sends back a response with the newly added topic.", () => {
+const topic = 
+  {
+    "slug": "Rainbow",
+    "description": "Today will be blue, tomorrow purple, the next day red, and the day after orange."
+  };
+return request(app)
+.post('/api/topics')
+.send(topic)
+.expect(201)
+.then(({body : { topic }}) => {
+  expect(topic).toEqual(
+    expect.objectContaining({
+      slug: expect.any(String),
+      description: expect.any(String)
+    })
+  )
+});
+})
+
+it("Responds with 201 status code and returns new topic as long as request object does not violate any PSQL table constraints.", () => {
+  const topic = 
+  {
+    "slug": "The secret of existence"
+  };
+return request(app)
+.post('/api/topics')
+.send(topic)
+.expect(201)
+.then(({body : { topic }}) => {
+  expect(topic).toEqual(
+    expect.objectContaining({
+      slug: expect.any(String),
+      description: null
+    })
+  );
+})
+})
+
+it("Responds with 201 status code and returns the new topic, with any malformed keys replaced with a key-value pair consisting of the correct column name and null", () => {
+  const topic = 
+  {
+    "slug": "Rainbow",
+    "descrip": "Not a primary key; no constraints; allowed to be null"
+  };
+return request(app)
+.post('/api/topics')
+.send(topic)
+.expect(201)
+.then(({body : { topic }}) => {
+  expect(topic.description).toBe(null);
+})
+})
+
+it("Responds with 400 status code if request body is missing a required key (leading to primary key not null constraint violation).", () => {
+  const topic = 
+  {
+    "slu": "Alkaline earth metals",
+    "description": "Let's discuss potassium."
+  };
+return request(app)
+.post('/api/topics')
+.send(topic)
+.expect(400)
+.then(({body : { msg }}) => {
+  expect(msg).toBe("Bad request.");
+})
+})
+})

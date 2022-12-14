@@ -1,7 +1,7 @@
 \c nc_news;
 
 \echo '\n \n topics \n'
-SELECT * FROM topics LIMIT 10;
+SELECT * FROM topics;
 
 \echo '\n \n users \n'
 SELECT username, name FROM users LIMIT 10;
@@ -26,6 +26,8 @@ LIMIT 10;
 
 \echo '\n \n Insert article \n'
 
-INSERT INTO articles (title, topic, author, body) 
-VALUES ('Welcome to Fat City', 'coding', 'grumpy19', 'Wow oh wow') RETURNING *;
+--INSERT INTO articles (title, topic, author, body) 
+--VALUES ('Welcome to Fat City', 'coding', 'grumpy19', 'Wow oh wow') RETURNING *;
 
+INSERT INTO topics (slug, description)
+VALUES (NULL, 'Let''s try this again') RETURNING *;
