@@ -8,11 +8,33 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "enables client to add a new topic to the database and returns the new entry",
+    "exampleRequest": { 
+          "slug": "mountain-biking",
+          "description": "Exciting and frenetic - perfect for any occasion"
+        },
+    "exampleResponse": {
+        "topic": {
+          "slug": "mountain-biking",
+          "description": "Exciting and frenetic - perfect for any occasion"
+        }
+      }
+  },
   "GET /api/articles": {
     "description": "responds with an array of all topics",
-    "queries": ["topic", "sort_by", "order"],
+    "queries": ["topic", "sort_by", "order", "limit", "page"],
     "exampleResponse": {
       "articles": [
+        {
+          "author": "weegembump",
+          "title": "By Odin's Beard",
+          "article_id": 45,
+          "topic": "coding",
+          "created_at": "2022-12-14T23:48:10.706Z",
+          "votes": 0,
+          "comment_count": 0
+        },
         {
           "author": "grumpy19",
           "title": "The Notorious MSG’s Unlikely Formula For Success",
@@ -22,8 +44,32 @@
           "votes": 0,
           "comment_count": 11
         }
-      ]
+      ],
+      "total_count": 2,
+      "page": 1,
+      "page_limit": 2
     }
+  },
+  "POST /api/articles" : {
+    "description": "enables client to add a new article to the database and returns the new entry",
+    "exampleRequest": {
+          "author": "weegembump",
+          "title": "By Odin's Beard",
+          "body" : "The absolute scale does not begin at zero",
+          "topic" : "coding"
+        },
+    "exampleResponse": {
+        "article": {
+          "article_id": 45,
+          "title": "By Odin's Beard",
+          "topic": "coding",
+          "author": "weegembump",
+          "body": "The absolute scale does not begin at zero",
+          "created_at": "2022-12-14T23:48:10.706Z",
+          "votes": 0,
+          "comment_count": 0
+        }
+      }
   },
   "GET /api/articles/:article_id" : {
     "description": "responds with the article object specified in the request URL",
@@ -40,8 +86,27 @@
         }
       }
   },
+  "PATCH /api/articles/:article_id" : {
+    "description": "enables client to update the number of votes on a specified article and returns the updated article",
+    "exampleRequest": { "inc_votes": 23 },
+    "exampleResponse":  {
+          "article": {
+            "article_id": 7,
+            "title": "Using React Native: One Year Later",
+            "topic": "coding",
+            "author": "tickle122",
+            "body": "When I interviewed for my current job,...",
+            "created_at": "2020-10-18T00:26:00.000Z",
+            "votes": 23
+          }
+        }
+  },
+  "DELETE /api/articles/:article_id" : {
+    "description": "enables client to delete an article from the database by specifying its article_id in the URL"
+  },
   "GET /api/articles/:article_id/comments" : {
     "description": "responds with an array of comments for the article specified in the request URL",
+    "queries": ["limit", "page"],
     "exampleResponse": {
       "comments": [
         {
@@ -71,21 +136,6 @@
         }
       }
   },
-  "PATCH /api/articles/:article_id" : {
-    "description": "enables client to update the number of votes on a specified article and returns the updated article",
-    "exampleRequest": { "inc_votes": 23 },
-    "exampleResponse":  {
-        "article": {
-          "article_id": 30,
-          "title": "Z",
-          "topic": "mitch",
-          "author": "icellusedkars",
-          "body": "I was hungry.",
-          "created_at": "2020-01-07T14:08:00.000Z",
-          "votes": 23
-        }
-    }
-  },
   "GET /api/users": {
     "description": "responds with an array of all users",
     "exampleResponse": {
@@ -97,6 +147,28 @@
           }
         ]
       }
+  },
+  "GET /api/users/:username" : {
+    "description": "responds with a user object corresponding to the specified username",
+    "exampleResponse": {
+            "username": "Londo",
+            "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            "name": "Eidolon"
+          }
+  },
+  "PATCH /api/comments/:comment_id" : {
+    "description": "enables client to update the number of votes on a specified comment and returns the updated comment",
+    "exampleRequest": {"inc_votes": -11},
+    "exampleResponse": {
+          "comment": {
+            "comment_id": 4,
+            "body": "Rerum voluptatem quam odio facilis quis illo unde. Ex blanditiis optio tenetur sunt. Cumque dolor ducimus et qui officia quasi non illum reiciendis.",
+            "article_id": 18,
+            "author": "happyamy2016",
+            "votes": -7,
+            "created_at": "2020-10-10T22:03:00.000Z"
+          }
+        }
   },
   "DELETE /api/comments/:comment_id" : {
     "description": "enables client to delete a comment from the database by specifying its comment_id in the URL"

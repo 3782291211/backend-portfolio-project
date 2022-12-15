@@ -106,8 +106,5 @@ exports.deleteArticle = (req, res, next) => {
     deleteArticleById(article_id)
   ])
   .then(() => res.sendStatus(204))
-  .catch(err => {
-    console.log(err);
-    next(err);
-  })
+  .catch(err =>next(err));
 };

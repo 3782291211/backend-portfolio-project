@@ -489,12 +489,17 @@ it("Responds with 200 status code and returns a JSON string containing all avail
       expect.objectContaining({
         "GET /api": expect.any(Object),
         "GET /api/topics": expect.any(Object),
+        "POST /api/topics": expect.any(Object),
         "GET /api/articles": expect.any(Object),
+        "POST /api/articles" : expect.any(Object),
         "GET /api/articles/:article_id": expect.any(Object),
+        "PATCH /api/articles/:article_id": expect.any(Object),
+        "DELETE /api/articles/:article_id": expect.any(Object),
         "GET /api/articles/:article_id/comments": expect.any(Object),
         "POST /api/articles/:article_id/comments": expect.any(Object),
-        "PATCH /api/articles/:article_id": expect.any(Object),
         "GET /api/users": expect.any(Object),
+        "GET /api/users/:username": expect.any(Object),
+        "PATCH /api/comments/:comment_id": expect.any(Object),
         "DELETE /api/comments/:comment_id": expect.any(Object)
       })
     )
@@ -858,7 +863,7 @@ return request(app)
 })
 })
 
-describe.only("19) DELETE /api/articles/:article_id", () => {
+describe("19) DELETE /api/articles/:article_id", () => {
 it("Responds with 204 status code and no content; deletes article from database.", () => {
 return request(app)
 .delete('/api/articles/8')
@@ -866,7 +871,6 @@ return request(app)
 .then(() => {
   return db.query('SELECT * FROM articles WHERE article_id = 8;')
   .then(({rows : article, rowCount}) => {
-    console.log(article);
     expect(rowCount).toBe(0);
   });
 })
@@ -874,7 +878,7 @@ return request(app)
 
 it("Responds with 404 status code if request includes an article_id which does not exist in the database.", () => {
 return request(app)
-.delete('/api/articles/54')
+.delete('/api/articles/13')
 .expect(404)
 .then(({ body : { msg }}) => {
   expect(msg).toBe("Resource not found.")
@@ -883,11 +887,19 @@ return request(app)
 
 it("Responds with 400 status code if client attempts to delete an article whose primary key is referenced by another table (comments).", () => {
 return request(app)
-.delete('/api/articles/9')
+.delete('/api/articles/5')
 .expect(400)
 .then(({ body : { msg }}) => {
   expect(msg).toBe("Resource cannot be deleted.")
 });
 })
+
+it("Responds with 400 status code if request contains an article_id of invalid data type.", () => {
+return request(app)
+.delete('/api/articles/article5')
+.expect(400)
+.then(({ body : { msg }}) => {
+  expect(msg).toBe("Request contains invalid data type.");
+});
 })
-//one more test for invalid id!
+})
