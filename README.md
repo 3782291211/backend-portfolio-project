@@ -1,5 +1,6 @@
 # Welcome to my **_Node.js_ API** backend project 
-## December 2022
+ 
+*Created on December 2022*
 
 This repository contains a backend project I have completed which is a CRUD REST API utilising the Express framework on Node.js. This API defines several distinct endpoints which interact with a PSQL database to provide the client with information via different HTTP request methods.
 
