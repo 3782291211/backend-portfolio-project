@@ -35,7 +35,7 @@ exports.getCommentsByArticle = (req, res, next) => {
 
 exports.postComment = (req, res, next) => {
   insertComment(req.body, req.params.article_id)
-  .then(newComment => res.status(201).send({"new_comment": newComment}))
+  .then(comment => res.status(201).send({comment}))
   .catch(err => next(err));
 };
 

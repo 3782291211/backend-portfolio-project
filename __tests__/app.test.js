@@ -174,8 +174,8 @@ it("Responds with 201 status code, adds new comment to database and sends the ne
   .post('/api/articles/4/comments')
   .send({username : "lurker", body: "To listen requires a voice, for what needs to be known requires us to ask."})
   .expect(201)
-  .then(({body : {new_comment}}) => {
-     expect(new_comment).toEqual(
+  .then(({body : {comment}}) => {
+     expect(comment).toEqual(
       expect.objectContaining({
           comment_id: 19,
           body: "To listen requires a voice, for what needs to be known requires us to ask.",
