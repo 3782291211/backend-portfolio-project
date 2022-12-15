@@ -110,6 +110,7 @@ exports.deleteArticle = (req, res, next) => {
 };
 
 exports.showWelcomeMessage = (req, res, next) => {
-  res.status(200).send({msg : "To see list of available endpoints, append /api to URL."})
+ return Promise.resolve(res.status(200).send(
+  {msg : "To see list of available endpoints, append /api to URL."}))
   .catch(err => next(err));
 };
