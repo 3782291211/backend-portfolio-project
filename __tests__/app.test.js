@@ -868,12 +868,8 @@ it("Responds with 204 status code and no content; deletes article from database.
 return request(app)
 .delete('/api/articles/8')
 .expect(204)
-.then(() => {
-  return db.query('SELECT * FROM articles WHERE article_id = 8;')
-  .then(({rows : article, rowCount}) => {
-    expect(rowCount).toBe(0);
-  });
-})
+.then(() => db.query('SELECT * FROM articles WHERE article_id = 8;'))
+.then(({rowCount}) => expect(rowCount).toBe(0));
 })
 
 it("Responds with 404 status code if request includes an article_id which does not exist in the database.", () => {
@@ -885,13 +881,12 @@ return request(app)
 });
 })
 
-it("Responds with 400 status code if client attempts to delete an article whose primary key is referenced by another table (comments).", () => {
+it("Responds with 204 status code and deletes the article AND all of its comments.", () => {
 return request(app)
 .delete('/api/articles/5')
-.expect(400)
-.then(({ body : { msg }}) => {
-  expect(msg).toBe("Resource cannot be deleted.")
-});
+.expect(204)
+.then(() => db.query('SELECT * FROM comments WHERE article_id = 5;'))
+.then(({rowCount}) => expect(rowCount).toBe(0));
 })
 
 it("Responds with 400 status code if request contains an article_id of invalid data type.", () => {
