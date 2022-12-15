@@ -4,13 +4,13 @@
 This repository contains a backend project I have completed which is a CRUD REST API utilising the Express framework on Node.js. This API defines several distinct endpoints which interact with a PSQL database to provide the client with information via different HTTP request methods.
 
 ## Quick-start instructions
-1) Use https://majids-backend-api-project.onrender.com to send requests to the API.
+1) To send requests to the API and see it in action, [use this URL](https://majids-backend-api-project.onrender.com).
 2) Refer to the endpoints.json file in the root of this repository for information on all available endpoints as well as request body requirements for POST/PATCH request.
    - Alternatively, append /api to the above URL to view all endpoints.
 
 ## Running the application
 
-To see this API in action, please follow these steps. For details on sub-directories, see below.
+To explore the features and functionality of the application, please follow these steps. For details on sub-directories, see below.
 
 1) Clone the repository into a local directory.
 2) In your terminal, execute the command `npm install` to install dependencies.
