@@ -108,3 +108,8 @@ exports.deleteArticle = (req, res, next) => {
   .then(() => res.sendStatus(204))
   .catch(err =>next(err));
 };
+
+exports.showWelcomeMessage = (req, res, next) => {
+  res.status(200).send({msg : "To see list of available endpoints, append /api to URL."})
+  .catch(err => next(err));
+};
