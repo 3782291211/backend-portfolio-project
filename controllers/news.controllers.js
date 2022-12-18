@@ -78,11 +78,8 @@ exports.getUserById = (req, res, next) => {
 exports.patchCommentVotes = (req, res, next) => {
   const {comment_id} = req.params;
   const incVotes = req.body.inc_votes;
-
-  return Promise.all([
-    checkValueExists('comment_id', 'comments', comment_id),
-    updateCommentVotes(comment_id, incVotes)
-  ]).then(([prom1, comment]) => res.status(200).send({comment}))
+  updateCommentVotes(comment_id, incVotes)
+  .then(comment => res.status(200).send({comment}))
   .catch(err => next(err));
 };
 
