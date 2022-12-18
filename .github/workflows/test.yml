@@ -1,0 +1,13 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  greeting:
+    runs_on: ubuntu-latest
+    steps:
+      - name: Say hello
+        run: echo 'Hello peeps from the pipeline!'
