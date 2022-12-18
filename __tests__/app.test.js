@@ -448,7 +448,7 @@ it("Responds with 200 status code and an empty array if client's request include
 })
 })
 
-describe.only("11) DELETE /api/comments/:comment_id", () => {
+describe("11) DELETE /api/comments/:comment_id", () => {
 it("Responds with 204 status code and no content, deleting the specified comment from the database.", () => {
 return request(app)
 .delete('/api/comments/9')
