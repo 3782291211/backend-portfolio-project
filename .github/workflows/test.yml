@@ -41,7 +41,7 @@ jobs:
       - name: Test application
         run: PGDATABASE=test_db PGUSER=mr_testerson PGPASSWORD=p@55w0Rd npm run test-app
 
-  test-app-live-db
+  test-app-live-db:
     needs: test-app
     runs-on: ubuntu-latest
     steps:
