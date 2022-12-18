@@ -560,7 +560,7 @@ it("Responds with 404 status code if a request is made with a comment_id which d
   .send({inc_votes : -23})
   .expect(404)
   .then(({ body : { msg }}) => {
-    expect(msg).toBe("Resource not found.");
+    expect(msg).toBe("Comment not found.");
   })
 })
 
