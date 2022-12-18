@@ -51,5 +51,3 @@ jobs:
         run: npm install
       - name: Test app with live database
         run: NODE_ENV=production DATABASE_URL=${{ secrets.DATABASE_URL }} npm run test-app
-
-        
