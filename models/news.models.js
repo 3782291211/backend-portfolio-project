@@ -1,9 +1,15 @@
 const db = require('../db/connection');
 const fs = require('fs/promises');
 
-exports.selectTopics = () => 
-  db.query(`SELECT * FROM topics;`)
+exports.selectTopics = () => {
+  return db.query(`SELECT slug, description, COUNT(articles.article_id) ::INTEGER
+  AS number_of_articles 
+  FROM topics
+  LEFT JOIN articles
+  ON topics.slug LIKE articles.topic
+  GROUP BY slug;`)
   .then(({rows : topics}) => topics);
+};
 
 
 exports.selectArticles = (
@@ -21,8 +27,10 @@ exports.selectArticles = (
     return Promise.reject({status: 400, msg: 'Invalid order query.'});
   };
   
-  let queryString = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, COUNT(comment_id) ::INTEGER AS comment_count
+  let queryString = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, COUNT(comment_id) ::INTEGER AS comment_count, avatar_url
   FROM articles
+  JOIN users
+  ON articles.author = users.username
   LEFT OUTER JOIN comments
   ON articles.article_id = comments.article_id `;
 
@@ -33,7 +41,7 @@ exports.selectArticles = (
     queryString += 'WHERE topic = $3 ';
   };
 
-  queryString += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order} LIMIT $1 OFFSET $2;`
+  queryString += `GROUP BY articles.article_id, avatar_url ORDER BY ${sort_by} ${order} LIMIT $1 OFFSET $2;`
   
   return db.query(queryString, queryParameters).then(({rows, rowCount}) => {
     return {articles: rows, total_count: rowCount, page: page, page_limit: parseInt(limit)};
@@ -43,12 +51,14 @@ exports.selectArticles = (
 
 exports.selectArticleById = articleId => {
   return db.query(`
-  SELECT articles.author, title, articles.article_id, articles.body, topic, articles.created_at, articles.votes, COUNT(comments.comment_id) ::INTEGER AS comment_count 
+  SELECT articles.author, title, articles.article_id, articles.body, topic, articles.created_at, articles.votes, COUNT(comments.comment_id) ::INTEGER AS comment_count, avatar_url 
   FROM articles
+  JOIN users
+  ON articles.author = users.username
   LEFT JOIN comments
   ON articles.article_id = comments.article_id
   WHERE articles.article_id = $1
-  GROUP BY articles.article_id;
+  GROUP BY articles.article_id, avatar_url;
   `, [articleId]).then(({rows: article, rowCount}) => 
   rowCount === 0 ? Promise.reject({status: 404, msg: "Article not found."}) : article[0]);
 };
@@ -56,8 +66,10 @@ exports.selectArticleById = articleId => {
 
 exports.selectCommentsByArticle = (articleId, limit = 10, page = 1) => {
   return db.query(`
-  SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body 
+  SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, avatar_url 
   FROM comments
+  JOIN users
+  ON comments.author = users.username
   JOIN articles
   ON articles.article_id = comments.article_id
   WHERE articles.article_id = $1
@@ -146,4 +158,12 @@ exports.deleteTopicByName = topic => {
     };
   })
   .then(() => db.query('DELETE FROM topics WHERE topic = $1;', [topic]));
-}
+};
+
+exports.selectAllComments = () => {
+  return db.query(`SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, avatar_url 
+  FROM comments JOIN users 
+  ON comments.author LIKE users.username
+  ORDER BY created_at DESC;`)
+  .then(({rows : comments}) => comments);
+};

@@ -22,7 +22,7 @@ return request(app)
 })
 
 describe("2) GET api/topics", () => {
-it("Responds with 200 status code and an array of topic objects each with two keys: slug and description.", () => {
+it("Responds with 200 status code and an array of topic objects each with three keys: slug, description and number of articles.", () => {
 return request(app)
 .get('/api/topics')
 .expect(200)
@@ -34,7 +34,8 @@ topics.forEach(topic => {
     expect(topic).toEqual(
       expect.objectContaining({
           description: expect.any(String),
-          slug: expect.any(String)
+          slug: expect.any(String),
+          number_of_articles: expect.any(Number)
       }))
     })
 });
@@ -901,9 +902,33 @@ return request(app)
 })
 
 describe("20) DELETE /api/topics/:topic", () => {
-  it("Responds with 204 status code and deletes topic", () => {
+  it("Responds with 400 status code if a user tries to delete a topic which is referenced by existing articles", () => {
     return request(app)
     .delete('/api/topics/mitch')
     .expect(400);
+  })
+})
+
+describe("21) GET /api/comments", () => {
+  it("Responds with 200 status code and an array containing all comments", () => {
+    return request(app)
+    .get('/api/comments')
+    .expect(200)
+    .then(({body: {comments}}) => {
+      expect(comments).toHaveLength(18);
+      expect(comments).toBeSortedBy('created_at', { descending: true });
+      comments.forEach(comment => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            avatar_url: expect.any(String)
+          })
+        )
+      })
+    })
   })
 })

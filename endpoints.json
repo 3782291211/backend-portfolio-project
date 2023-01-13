@@ -6,7 +6,13 @@
   "GET /api/topics": {
     "description": "responds with an array of all topics",
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        { 
+          "slug": "football", 
+          "description": "Footie!",
+          "number_of_articles": 11
+          }
+        ]
     }
   },
 
