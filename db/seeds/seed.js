@@ -14,6 +14,7 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
 
   const topicsTablePromise = db.query(`
   CREATE TABLE topics (
+    topic_id SERIAL,
     slug VARCHAR PRIMARY KEY,
     description VARCHAR
   );`);
