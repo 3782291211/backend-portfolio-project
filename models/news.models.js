@@ -2,7 +2,7 @@ const db = require('../db/connection');
 const fs = require('fs/promises');
 
 exports.selectTopics = () => {
-  return db.query(`SELECT slug, description, COUNT(articles.article_id) ::INTEGER
+  return db.query(`SELECT topic_id, slug, description, COUNT(articles.article_id) ::INTEGER
   AS number_of_articles 
   FROM topics
   LEFT JOIN articles

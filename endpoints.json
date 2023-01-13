@@ -8,6 +8,7 @@
     "exampleResponse": {
       "topics": [
         { 
+          "topic_id": 1,
           "slug": "football", 
           "description": "Footie!",
           "number_of_articles": 11
