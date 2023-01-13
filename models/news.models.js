@@ -1,7 +1,6 @@
 const db = require('../db/connection');
 const fs = require('fs/promises');
 
-
 exports.selectTopics = () => 
   db.query(`SELECT * FROM topics;`)
   .then(({rows : topics}) => topics);
@@ -138,3 +137,13 @@ exports.insertTopic = (slug, description) => {
 
 exports.deleteArticleById = articleId => 
   db.query(`DELETE FROM articles WHERE article_id = $1;`, [articleId]);
+
+exports.deleteTopicByName = topic => {
+  return db.query('SELECT * FROM articles WHERE topic LIKE $1;', [topic])
+  .then(({rowCount}) => {
+    if (rowCount !== 0) {
+      return Promise.reject({status: 400, msg: "Unable to delete. Topic is associated with existing articles on this site."});
+    };
+  })
+  .then(() => db.query('DELETE FROM topics WHERE topic = $1;', [topic]));
+}

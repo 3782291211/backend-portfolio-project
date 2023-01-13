@@ -24,6 +24,10 @@
       }
   },
 
+  "DELETE /api/topics/:topic": {
+    "description": "enables client to delete a topic if it is not associated with any articles"
+  },
+
   "GET /api/articles": {
     "description": "responds with an array of all articles",
     "queries": ["topic", "sort_by", "order", "limit", "page"],

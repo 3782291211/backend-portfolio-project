@@ -1,0 +1,9 @@
+You are now connected to database "nc_news" as user "g398g361".
+
+ 
+ Use this file to pipe query output data into a .txt file for easy viewing. 
+
+ article_id | title | topic | author | body | created_at | votes 
+------------+-------+-------+--------+------+------------+-------
+(0 rows)
+

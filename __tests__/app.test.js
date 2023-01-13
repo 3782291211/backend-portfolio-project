@@ -500,7 +500,8 @@ it("Responds with 200 status code and returns a JSON string containing all avail
         "GET /api/users": expect.any(Object),
         "GET /api/users/:username": expect.any(Object),
         "PATCH /api/comments/:comment_id": expect.any(Object),
-        "DELETE /api/comments/:comment_id": expect.any(Object)
+        "DELETE /api/comments/:comment_id": expect.any(Object),
+        "DELETE /api/topics/:topic": expect.any(Object)
       })
     )
   })
@@ -897,4 +898,12 @@ return request(app)
   expect(msg).toBe("Request contains invalid data type.");
 });
 })
+})
+
+describe("20) DELETE /api/topics/:topic", () => {
+  it("Responds with 204 status code and deletes topic", () => {
+    return request(app)
+    .delete('/api/topics/mitch')
+    .expect(400);
+  })
 })

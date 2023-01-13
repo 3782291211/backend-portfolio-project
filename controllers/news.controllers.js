@@ -1,4 +1,4 @@
-const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile, selectUserById, updateCommentVotes, insertArticle, insertTopic, deleteArticleById} = require('../models/news.models');
+const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile, selectUserById, updateCommentVotes, insertArticle, insertTopic, deleteArticleById, deleteTopicByName} = require('../models/news.models');
 const {checkValueExists} = require('../models/utility-queries.models');
 
 exports.getTopics = (req, res, next) => {
@@ -104,6 +104,16 @@ exports.deleteArticle = (req, res, next) => {
   ])
   .then(() => res.sendStatus(204))
   .catch(err =>next(err));
+};
+
+exports.deleteTopic = (req, res, next) => {
+  const { topic } = req.params;
+  return Promise.all([
+    checkValueExists('slug', 'topics', topic),
+    deleteTopicByName(topic)
+  ])
+  .then(() => res.sendStatus(204))
+  .catch(err => next(err));
 };
 
 exports.showWelcomeMessage = (req, res, next) => {
