@@ -157,7 +157,7 @@ exports.deleteTopicByName = topic => {
       return Promise.reject({status: 400, msg: "Unable to delete. Topic is associated with existing articles on this site."});
     };
   })
-  .then(() => db.query('DELETE FROM topics WHERE topic = $1;', [topic]));
+  .then(() => db.query('DELETE FROM topics WHERE slug = $1;', [topic]));
 };
 
 exports.selectAllComments = () => {

@@ -902,12 +902,18 @@ return request(app)
 })
 
 describe("20) DELETE /api/topics/:topic", () => {
-  it("Responds with 400 status code if a user tries to delete a topic which is referenced by existing articles", () => {
-    return request(app)
-    .delete('/api/topics/mitch')
-    .expect(400);
-  })
-})
+it("Responds with 400 status code if a user tries to delete a topic which is referenced by existing articles", () => {
+  return request(app)
+  .delete('/api/topics/mitch')
+  .expect(400);
+});
+
+it("Responds with 204 status code and deleted a topic if it is not referenced by any articles", () => {
+  return request(app)
+  .delete('/api/topics/paper')
+  .expect(204);
+});
+});
 
 describe("21) GET /api/comments", () => {
   it("Responds with 200 status code and an array containing all comments", () => {
@@ -931,4 +937,4 @@ describe("21) GET /api/comments", () => {
       })
     })
   })
-})
+});
