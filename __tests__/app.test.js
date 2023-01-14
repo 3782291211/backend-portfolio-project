@@ -931,10 +931,20 @@ describe("21) GET /api/comments", () => {
             created_at: expect.any(String),
             author: expect.any(String),
             body: expect.any(String),
-            avatar_url: expect.any(String)
+            avatar_url: expect.any(String),
+            article: expect.any(String) 
           })
         )
       })
+    })
+  })
+
+  it("Endpoint accepts a query specifiying page limit", () => {
+    return request(app)
+    .get('/api/comments?limit=9')
+    .expect(200)
+    .then(({body: {comments}}) => {
+      expect(comments).toHaveLength(9);
     })
   })
 });

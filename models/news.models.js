@@ -160,10 +160,13 @@ exports.deleteTopicByName = topic => {
   .then(() => db.query('DELETE FROM topics WHERE slug = $1;', [topic]));
 };
 
-exports.selectAllComments = () => {
-  return db.query(`SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, avatar_url 
-  FROM comments JOIN users 
+exports.selectAllComments = limit => {
+  return db.query(`SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, articles.title AS article, avatar_url 
+  FROM comments 
+  JOIN articles
+  ON comments.article_id = articles.article_id
+  JOIN users 
   ON comments.author LIKE users.username
-  ORDER BY created_at DESC;`)
+  ORDER BY created_at DESC LIMIT $1;`, [limit])
   .then(({rows : comments}) => comments);
 };
