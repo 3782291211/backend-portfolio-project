@@ -113,10 +113,7 @@ exports.deleteTopic = (req, res, next) => {
     deleteTopicByName(topic)
   ])
   .then(() => res.sendStatus(204))
-  .catch(err => {
-    console.log(err);
-    next(err)
-  });
+  .catch(err => next(err));
 };
 
 exports.getComments = (req, res, next) => {
