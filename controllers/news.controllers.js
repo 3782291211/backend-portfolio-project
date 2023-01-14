@@ -117,8 +117,8 @@ exports.deleteTopic = (req, res, next) => {
 };
 
 exports.getComments = (req, res, next) => {
-  const { limit = 50 } = req.query;
-  selectAllComments(limit).then(comments => res.status(200).send({comments}))
+  const { limit = 50, page = 1 } = req.query;
+  selectAllComments(limit, page).then(comments => res.status(200).send({comments}))
   .catch(err => next(err));
 }
 

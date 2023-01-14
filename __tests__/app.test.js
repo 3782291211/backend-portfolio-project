@@ -947,4 +947,15 @@ describe("21) GET /api/comments", () => {
       expect(comments).toHaveLength(9);
     })
   })
+
+  it("Endpoint accepts a page offset query", () => {
+    return request(app)
+    .get('/api/comments?limit=3&page=4')
+    .expect(200)
+    .then(({body: {comments}}) => {
+      expect(comments).toHaveLength(3);
+      expect(comments.map(m => m.comment_id)).toEqual([7, 8, 6]);
+      expect(comments.map(m => m.article_id)).toEqual([1, 1, 1]);
+    })
+  })
 });
