@@ -196,6 +196,35 @@
 
   "DELETE /api/comments/:comment_id" : {
     "description": "enables client to delete a comment from the database by specifying its comment_id in the URL"
+  },
+
+  "GET /api/comments" : {
+    "description" : "returns an array containing all comments",
+    "queries" : ["limit", "page"],
+    "exampleResponse" : {
+      "comments": [
+        {
+          "comment_id": 135,
+          "votes": -1,
+          "created_at": "2020-09-07T07:02:00.000Z",
+          "author": "happyamy2016",
+          "body": "Quam officiis reprehenderit architecto omnis est facere inventore. Expedita est enim dolore debitis velit. Quo facilis accusantium error.",
+          "article_id": 27,
+          "article": "Thanksgiving Drinks for Everyone",
+          "avatar_url": "https://vignette1.wikia.nocookie.net/mrmen/images/7/7f/Mr_Happy.jpg/revision/latest?cb=20140102171729"
+        },
+        {
+          "comment_id": 205,
+          "votes": 5,
+          "created_at": "2020-09-07T03:07:00.000Z",
+          "author": "weegembump",
+          "body": "Voluptatum expedita et nobis non quisquam corrupti voluptas sed delectus. Sed dolorem itaque eius velit soluta quia deleniti. Dolorem rerum consequatur vitae. Ea cupiditate voluptate.",
+          "article_id": 25,
+          "article": "Sweet potato & butternut squash soup with lemon & garlic toast",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/7/7e/MrMen-Bump.png/revision/latest?cb=20180123225553"
+        }
+      ]
+    }
   }
 }
 }
