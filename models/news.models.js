@@ -161,7 +161,7 @@ exports.deleteTopicByName = topic => {
 };
 
 exports.selectAllComments = limit => {
-  return db.query(`SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, articles.title AS article, avatar_url 
+  return db.query(`SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, articles.article_id, articles.title AS article, avatar_url 
   FROM comments 
   JOIN articles
   ON comments.article_id = articles.article_id
