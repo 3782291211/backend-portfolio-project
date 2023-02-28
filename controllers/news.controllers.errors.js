@@ -4,6 +4,7 @@ exports.invalidPath = (req, res) =>
 exports.handlePSQLerrors = (err, req, res,next) =>
     err.code === '22P02' ? res.status(400).send({msg: 'Request contains invalid data type.'})
   : err.code === '23502' ? res.status(400).send({msg: "Bad request."})
+  : err.code === '23505' ? res.status(400).send({msg: "Username is already taken."})
   : next(err);
 
 exports.handleForeignKeyError = (err, req, res,next) => {
