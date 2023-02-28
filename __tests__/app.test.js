@@ -528,7 +528,10 @@ it("Responds with 200 status code and returns a JSON string containing all avail
         "GET /api/users/:username": expect.any(Object),
         "PATCH /api/comments/:comment_id": expect.any(Object),
         "DELETE /api/comments/:comment_id": expect.any(Object),
-        "DELETE /api/topics/:topic": expect.any(Object)
+        "DELETE /api/topics/:topic": expect.any(Object),
+        "POST /api/signup": expect.any(Object),
+        "POST /api/login": expect.any(Object),
+        "PATCH /api/users/:username": expect.any(Object)
       })
     )
   })
@@ -986,7 +989,7 @@ describe("21) GET /api/comments", () => {
   })
 });
 
-describe.only("22) POST /api/signup", () => {
+describe("22) POST /api/signup", () => {
 it("User can signup for a new account", () => {
   const newUser = {
     "name": "Rygel The Sixteenth",
@@ -1025,9 +1028,10 @@ it("User can signup for a new account", () => {
 it("Responds with 400 status code if user does not provide username and/or password.", () => {
   return request(app)
   .post('/api/signup')
+  .send({name: "new user"})
   .expect(400)
   .then(({body : {msg}}) => {
-    expect(msg).toBe('Password and username are required.');
+    expect(msg).toBe('Password is required.');
   })
 })
 
