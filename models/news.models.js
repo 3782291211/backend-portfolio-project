@@ -12,15 +12,8 @@ exports.selectTopics = () => {
 };
 
 
-exports.selectArticles = (
-        sort_by = 'created_at', 
-        order = 'DESC', 
-        limit = 10,
-        page = 1,
-        topic) => {  
-
+exports.selectArticles = (sort_by = 'created_at', order = 'DESC', limit = 10, page = 1, topic, author) => {  
   const validParameters= ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count'];
-  
   if(!validParameters.includes(sort_by)) {
     return Promise.reject({status: 400, msg: 'Invalid sort query.'});
   } else if (!/^ASC$|^DESC$/i.test(order)) {
@@ -34,11 +27,14 @@ exports.selectArticles = (
   LEFT OUTER JOIN comments
   ON articles.article_id = comments.article_id `;
 
-  const queryParameters = [limit, limit * (page - 1)];
+  let queryParameters = [limit, limit * (page - 1)];
   
-  if (topic) {
-    queryParameters.push(topic);
-    queryString += 'WHERE topic = $3 ';
+  if (topic && !author || !topic && author) {
+    queryParameters.push(topic || author);
+    queryString += `WHERE ${topic && 'topic' || author && 'articles.author'} = $3 `;
+  } else if (topic && author) {
+    queryParameters = [...queryParameters, topic, author];
+    queryString += 'WHERE topic = $3 AND articles.author = $4 '
   };
 
   queryString += `GROUP BY articles.article_id, avatar_url ORDER BY ${sort_by} ${order} LIMIT $1 OFFSET $2;`
@@ -125,6 +121,19 @@ exports.insertUser = (username, password, name, avatar_url) => {
   `, [username, password, name, avatar_url])
   .then(({rows: user}) => user[0]);
 }
+
+exports.updateUser = (currentUsername, newUsername, password, name, avatar_url) => {
+  return db.query(`
+  UPDATE users
+  SET 
+      username = COALESCE($2, username),
+      password = COALESCE($3, password),
+      name = COALESCE($4, name),
+      avatar_url = COALESCE($5, avatar_url)
+  WHERE username = $1 RETURNING *;
+  `, [currentUsername, newUsername, password, name, avatar_url])
+  .then(({rows: user}) => user[0]);
+};
 
 
 exports.loginUser = username => 
