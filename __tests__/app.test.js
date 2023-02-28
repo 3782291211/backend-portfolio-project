@@ -1052,3 +1052,52 @@ return request(app)
   })
 })
 })
+
+describe("23) POST /api/login", () => {
+it("Allows user to login with correct credentials, returning an error response for incorrect password or non-existent username.", () => {
+  const newUser = {
+    "name": "Gaius Baltar",
+    "username": "goldenarms",
+    "password": "3vcnxj99effd"
+  };
+
+  return request(app)
+  .post('/api/signup')
+  .send(newUser)
+  .expect(201)
+  .then(({body : {newUser}}) => {
+    expect(newUser).toEqual({
+      "name": "Gaius Baltar",
+      "username": "goldenarms",
+      "avatar_url": null
+    });
+  })
+  .then(() => {
+    return request(app)
+    .post('/api/login')
+    .send({"username": "goldenarms", "password": "sd3vcnxj99effd"})
+    .expect(400)
+    .then(({body : {msg}}) => {
+      expect(msg).toBe("Incorrect password.");
+    })
+  })
+  .then(() => {
+    return request(app)
+    .post('/api/login')
+    .send({"username": "goldenarmsxx", "password": "3vcnxj99effd"})
+    .expect(404)
+    .then(({body : {msg}}) => {
+      expect(msg).toBe("Username not found.");
+    })
+  })
+  .then(() => {
+    return request(app)
+    .post('/api/login')
+    .send({"username": "goldenarms", "password": "3vcnxj99effd"})
+    .expect(200)
+    .then(({body : {msg}}) => {
+      expect(msg).toBe("Successfully logged in.");
+    })
+  });
+})
+})
