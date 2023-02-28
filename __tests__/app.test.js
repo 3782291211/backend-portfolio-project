@@ -531,7 +531,8 @@ it("Responds with 200 status code and returns a JSON string containing all avail
         "DELETE /api/topics/:topic": expect.any(Object),
         "POST /api/signup": expect.any(Object),
         "POST /api/login": expect.any(Object),
-        "PATCH /api/users/:username": expect.any(Object)
+        "PATCH /api/users/:username": expect.any(Object),
+        "DELETE /api/users/:useranme": expect.any(Object)
       })
     )
   })
@@ -1101,3 +1102,69 @@ it("Allows user to login with correct credentials, returning an error response f
   });
 })
 })
+
+describe("24) PATCH /api/users/:username", () => {
+it("Allows user to update any of their details.", () => {
+const requestBody = {
+	"name": "Charvid Haplo",
+	"username": "Slugged",
+	"password": "090976sdcMMn",
+	"avatar_url": "newavatar.url.com"
+};
+
+return request(app)
+.patch('/api/users/lurker')
+.send(requestBody)
+.expect(200)
+.then(({body : {user}}) => {
+  expect(user).toEqual({
+    "name": "Charvid Haplo",
+    "username": "Slugged",
+    "avatar_url": "newavatar.url.com"
+  });
+})
+});
+
+it("Allows user to change their password and log in with the new pasword.", () => {
+  const password = "sdjinsd90fbs", username = "rogersop";
+  return request(app)
+  .patch(`/api/users/${username}`)
+  .send({password})
+  .expect(200)
+  .then(({body}) => {
+    return request(app)
+    .post('/api/login')
+    .send({username, password})
+    .expect(200)
+  })
+  .then(({body: {msg}}) => {
+    expect(msg).toBe("Successfully logged in.");
+  })
+});
+
+it("Responds with 404 status code if username does not exist.", () => {
+  return request(app)
+  .patch('/api/users/spraysounds')
+  .send({password: "1234565"})
+  .expect(404)
+  .then(({body : {msg}}) => {
+    expect(msg).toBe("User not found.");
+  });
+});
+})
+
+/*describe.only("25) DELETE /api/users/:username", () => {
+it("Allows user to delete their account.", () => {
+  return request(app)
+  .delete('/api/users/icellusedkars')
+  .expect(204)
+  .then(() => {
+    return request(app)
+    .get('/api/users/icellusedkars')
+    .expect(404);
+  })
+  .then(({body: {msg}}) => {
+    expect(msg).toBe("User not found.");
+  })
+})
+})*/
