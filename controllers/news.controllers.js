@@ -149,8 +149,12 @@ exports.login = (req, res, next) => {
 
 exports.signup = (req, res, next) => {
   const {username, password, name, avatar_url = null} = req.body;
-  if (!password || !username) {
-    res.status(400).send({msg: "Password and username are required."});
+  if (!password) {
+    res.status(400).send({msg: "Password is required."});
+  } else if (!username) {
+    res.status(400).send({msg: "Username is required."});
+  } else if (!name) {
+    res.status(400).send({msg: "Name is required."});
   } else {
   bcrypt.hash(password, 10)
   .then(hashedPassword => {
