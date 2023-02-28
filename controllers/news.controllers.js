@@ -1,4 +1,4 @@
-const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile, selectUserById, updateCommentVotes, insertArticle, insertTopic, deleteArticleById, deleteTopicByName, selectAllComments, insertUser, loginUser} = require('../models/news.models');
+const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile, selectUserById, updateCommentVotes, insertArticle, insertTopic, deleteArticleById, deleteTopicByName, selectAllComments, insertUser, loginUser, updateUser} = require('../models/news.models');
 const {checkValueExists} = require('../models/utility-queries.models');
 const bcrypt = require('bcrypt');
 
@@ -8,13 +8,16 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by , order , limit , page , topic } = req.query;
+  const { sort_by , order , limit , page , topic, author } = req.query;
   return Promise.all([
-     selectArticles(sort_by, order, limit, page, topic),
+     selectArticles(sort_by, order, limit, page, topic, author),
      checkValueExists('slug', 'topics', req.query.topic)
   ]).then(([articles]) => {
     res.status(200).send(articles);
-  }).catch(err => next(err));
+  }).catch(err => {
+    console.log(err);
+    next(err)
+  } );
 };
 
 exports.getArticleById = (req, res, next) => {
@@ -158,6 +161,25 @@ exports.signup = (req, res, next) => {
   .catch(err => next(err));
 };
 
-exports.updateUserById = (req, res, next) => {
-  
+exports.patchUser = (req, res, next) => {
+  const {username: currentUsername} = req.params;
+  const {username: newUsername = null, password = null, name = null, avatar_url = null} = req.body;
+  if (password) {
+    bcrypt.hash(password, 10)
+    .then(hashedPassword => {
+      return hashedPassword;
+    })
+    .then(hashedPassword => {
+      updateUser(currentUsername, newUsername, hashedPassword, name, avatar_url)
+      .then(user => res.status(200).send({user}))
+      .catch(err => next(err));
+    })
+  } else {
+    updateUser(currentUsername, newUsername, password, name, avatar_url)
+    .then(user => res.status(200).send({user}))
+    .catch(err => {
+      console.log(err);
+      next(err);
+    });
+  };
 }
