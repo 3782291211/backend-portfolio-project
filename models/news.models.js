@@ -101,7 +101,7 @@ exports.updateArticleVotes = (articleId, incVotes) => {
 
 
 exports.selectUsers = () => 
-  db.query(`SELECT * FROM users;`).then(({rows: users}) => users);
+  db.query(`SELECT username, name, avatar_url FROM users;`).then(({rows: users}) => users);
 
 
 exports.deleteCommentById = commentId => 
@@ -113,6 +113,21 @@ exports.readJSONFile = () =>
 
 
 exports.selectUserById = username => 
+  db.query(`SELECT username, name, avatar_url FROM users WHERE username = $1;`, [username])
+  .then(({rows : users, rowCount}) => 
+  rowCount === 0 ? Promise.reject({status: 404, msg : "Username not found."}) : users[0]);
+
+
+exports.insertUser = (username, password, name, avatar_url) => {
+  return db.query(`
+  INSERT INTO users (username, password, name, avatar_url)
+  VALUES ($1, $2, $3, $4) RETURNING username, name, avatar_url;
+  `, [username, password, name, avatar_url])
+  .then(({rows: user}) => user[0]);
+}
+
+
+exports.loginUser = username => 
   db.query(`SELECT * FROM users WHERE username = $1;`, [username])
   .then(({rows : users, rowCount}) => 
   rowCount === 0 ? Promise.reject({status: 404, msg : "Username not found."}) : users[0]);
