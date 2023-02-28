@@ -1,5 +1,6 @@
-const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile, selectUserById, updateCommentVotes, insertArticle, insertTopic, deleteArticleById, deleteTopicByName, selectAllComments} = require('../models/news.models');
+const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile, selectUserById, updateCommentVotes, insertArticle, insertTopic, deleteArticleById, deleteTopicByName, selectAllComments, insertUser, loginUser} = require('../models/news.models');
 const {checkValueExists} = require('../models/utility-queries.models');
+const bcrypt = require('bcrypt');
 
 exports.getTopics = (req, res, next) => {
   selectTopics().then(topics => res.status(200).send({topics}))
@@ -127,3 +128,36 @@ exports.showWelcomeMessage = (req, res, next) => {
   {msg : "To see list of available endpoints, append /api to URL."}))
   .catch(err => next(err));
 };
+
+exports.login = (req, res, next) => {
+  const {username, password: loginPassword} = req.body;
+  loginUser(username)
+  .then(({password: correctPassword}) => {
+    return bcrypt.compare(loginPassword, correctPassword);
+  })
+  .then(isCorrectPassword => {
+    return isCorrectPassword ? res.status(200).send({msg: "Successfully logged in."})
+    : res.status(400).send({msg: "Incorrect password."});
+  })
+  .catch(err => {
+    next(err);
+  })
+
+};
+
+exports.signup = (req, res, next) => {
+  const {username, password, name, avatar_url = null} = req.body;
+  bcrypt.hash(password, 10)
+  .then(hashedPassword => {
+    return hashedPassword;
+  })
+  .then(hashedPassword => {
+    return insertUser(username, hashedPassword, name, avatar_url)
+  })
+  .then(user => res.status(201).send({newUser: user}))
+  .catch(err => next(err));
+};
+
+exports.updateUserById = (req, res, next) => {
+  
+}
