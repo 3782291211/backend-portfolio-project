@@ -133,8 +133,12 @@ exports.updateUser = (currentUsername, newUsername, password, name, avatar_url) 
   WHERE username = $1
   RETURNING name, username, avatar_url;
   `, [currentUsername, newUsername, password, name, avatar_url])
-  .then(({rows: user}) => user[0]);
+  .then(({rows: user, rowCount}) => 
+    rowCount === 0 ? Promise.reject({status: 404, msg: "User not found."}) : user[0]);
 };
+
+exports.deleteUser = username =>
+  db.query('DELETE FROM users WHERE username = $1;', [username]);
 
 
 exports.loginUser = username => 
