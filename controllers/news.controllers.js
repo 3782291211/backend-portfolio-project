@@ -11,13 +11,12 @@ exports.getArticles = (req, res, next) => {
   const { sort_by , order , limit , page , topic, author } = req.query;
   return Promise.all([
      selectArticles(sort_by, order, limit, page, topic, author),
-     checkValueExists('slug', 'topics', req.query.topic)
-  ]).then(([articles]) => {
+     topic && checkValueExists('slug', 'topics', topic),
+     author && checkValueExists('username', 'users', author)
+  ])
+  .then(([articles]) => {
     res.status(200).send(articles);
-  }).catch(err => {
-    console.log(err);
-    next(err)
-  } );
+  }).catch(err => next(err));
 };
 
 exports.getArticleById = (req, res, next) => {
