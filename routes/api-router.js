@@ -3,7 +3,7 @@ const topicsRouter = require('./topics-router');
 const articlesRouter = require('./articles-router');
 const usersRouter = require('./users-router');
 const commentsRouter = require('./comments-router');
-const {getJSONendpoints, showWelcomeMessage} = require('../controllers/news.controllers');
+const {getJSONendpoints, showWelcomeMessage, login, signup} = require('../controllers/news.controllers');
 
 apiRouter.use('/api/topics', topicsRouter);
 apiRouter.use('/api/articles', articlesRouter);
@@ -17,5 +17,13 @@ apiRouter
 apiRouter
 .route('/api')
 .get(getJSONendpoints);
+
+apiRouter
+.route('/api/login')
+.post(login);
+
+apiRouter
+.route('/api/signup')
+.post(signup);
 
 module.exports = apiRouter;
