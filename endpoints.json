@@ -196,6 +196,10 @@
     }
   },
 
+  "DELETE /api/users/:useranme": {
+    "description": "enables user to delete their account"
+  },
+
   "PATCH /api/comments/:comment_id" : {
     "description": "enables client to update the number of votes on a specified comment and returns the updated comment",
     "exampleRequest": {"inc_votes": -11},
