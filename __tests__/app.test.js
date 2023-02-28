@@ -364,7 +364,15 @@ return request(app)
      expect(articles).toHaveLength(1);
     });
 })
+})
 
+it("Path includes a query which filters articles by author, responding with a 200 status code and a filtered list of articles", () => {
+  return request(app)
+  .get('/api/articles?author=rogersop')
+  .expect(200)
+  .then(({body: {articles}}) => {
+    expect(articles).toHaveLength(3);
+  });
 })
 
 it("Path includes a query which sorts articles by column, responding with a 200 status code and a sorted list of articles. In the absence of an order query, the default sort order is descending.", () => {
@@ -439,9 +447,27 @@ it("Responds with 404 status code if client's request includes a topic query for
   })
 })
 
+it("Responds with 404 status code if client's request includes an author query for a author that does not exist in the database", () => {
+  return request(app)
+  .get('/api/articles?author=dalloo')
+  .expect(404)
+  .then(({ body : { msg }}) => {
+    expect(msg).toBe('Resource not found.');
+  })
+})
+
 it("Responds with 200 status code and an empty array if client's request includes a topic query for a topic that exists in the database but which is not referenced by any of the article objects.", () => {
   return request(app)
   .get('/api/articles?topic=paper')
+  .expect(200)
+  .then(({ body : { articles }}) => {
+    expect(articles).toEqual([]);
+  })
+})
+
+it("Responds with 200 status code and an empty array if client's request includes an author query for an author that exists in the database but which is not referenced by any of the article objects.", () => {
+  return request(app)
+  .get('/api/articles?author=lurker')
   .expect(200)
   .then(({ body : { articles }}) => {
     expect(articles).toEqual([]);
@@ -959,3 +985,10 @@ describe("21) GET /api/comments", () => {
     })
   })
 });
+
+describe("22) POST /api/signup", () => {
+it("User can signup for a new account", () => {
+  return request(app)
+  .get('/api/signup')
+})
+})
