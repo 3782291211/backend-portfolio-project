@@ -1,4 +1,4 @@
-const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile, selectUserById, updateCommentVotes, insertArticle, insertTopic, deleteArticleById, deleteTopicByName, selectAllComments, insertUser, loginUser, updateUser} = require('../models/news.models');
+const {selectTopics, selectArticles, selectArticleById, selectCommentsByArticle, insertComment, updateArticleVotes, selectUsers, deleteCommentById, readJSONFile, selectUserById, updateCommentVotes, insertArticle, insertTopic, deleteArticleById, deleteTopicByName, selectAllComments, insertUser, loginUser, updateUser, deleteUser} = require('../models/news.models');
 const {checkValueExists} = require('../models/utility-queries.models');
 const bcrypt = require('bcrypt');
 
@@ -76,7 +76,7 @@ exports.getUserById = (req, res, next) => {
   selectUserById(username)
   .then(user => res.status(200).send({user}))
   .catch(err => next(err));
-}
+};
 
 exports.patchCommentVotes = (req, res, next) => {
   const {comment_id} = req.params;
@@ -123,7 +123,7 @@ exports.getComments = (req, res, next) => {
   const { limit = 50, page = 1 } = req.query;
   selectAllComments(limit, page).then(comments => res.status(200).send({comments}))
   .catch(err => next(err));
-}
+};
 
 exports.showWelcomeMessage = (req, res, next) => {
  return Promise.resolve(res.status(200).send(
@@ -164,10 +164,7 @@ exports.signup = (req, res, next) => {
     return insertUser(username, hashedPassword, name, avatar_url)
   })
   .then(user => res.status(201).send({newUser: user}))
-  .catch(err => {
-    //console.log(err);
-    next(err);
-  });
+  .catch(err => next(err));
 };
 };
 
@@ -187,9 +184,16 @@ exports.patchUser = (req, res, next) => {
   } else {
     updateUser(currentUsername, newUsername, password, name, avatar_url)
     .then(user => res.status(200).send({user}))
-    .catch(err => {
-      console.log(err);
-      next(err);
-    });
+    .catch(err => next(err));
   };
-}
+};
+
+exports.deleteAccount = (req, res, next) => {
+  const { username } = req.params;
+  return Promise.all([
+    checkValueExists('username', 'users', username),
+    deleteUser(username)
+  ])
+  .then(() => res.sendStatus(204))
+  .catch(err => next(err));
+};
