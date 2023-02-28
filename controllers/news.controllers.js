@@ -149,6 +149,9 @@ exports.login = (req, res, next) => {
 
 exports.signup = (req, res, next) => {
   const {username, password, name, avatar_url = null} = req.body;
+  if (!password || !username) {
+    res.status(400).send({msg: "Password and username are required."});
+  } else {
   bcrypt.hash(password, 10)
   .then(hashedPassword => {
     return hashedPassword;
@@ -157,7 +160,11 @@ exports.signup = (req, res, next) => {
     return insertUser(username, hashedPassword, name, avatar_url)
   })
   .then(user => res.status(201).send({newUser: user}))
-  .catch(err => next(err));
+  .catch(err => {
+    //console.log(err);
+    next(err);
+  });
+};
 };
 
 exports.patchUser = (req, res, next) => {
