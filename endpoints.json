@@ -37,7 +37,7 @@
 
   "GET /api/articles": {
     "description": "responds with an array of all articles",
-    "queries": ["topic", "sort_by", "order", "limit", "page"],
+    "queries": ["topic", "author", "sort_by", "order", "limit", "page"],
     "exampleResponse": {
       "articles": [
         {
@@ -179,6 +179,23 @@
           }
   },
 
+  "PATCH /api/users/:username": {
+    "description": "allows user to update any/all of their details",
+    "exampleRequest": {
+      "name": "Plutarch Manliq",
+      "username": "Racer-X",
+      "password": "8edfbsdsdsdsds",
+      "avatar_url": "avatars.com/newavatar"
+    },
+    "exampleResponse": {
+      "user": {
+        "username": "Racer-X",
+        "name": "Plutarch Manliq",
+        "avatar_url": "avatars.com/newavatar"
+      }
+    }
+  },
+
   "PATCH /api/comments/:comment_id" : {
     "description": "enables client to update the number of votes on a specified comment and returns the updated comment",
     "exampleRequest": {"inc_votes": -11},
@@ -225,6 +242,31 @@
         }
       ]
     }
+  },
+
+  "POST /api/signup": {
+    "description": "allows user to sign up with a name, username and password",
+    "exampleRequest": {
+      "name": "Melon",
+      "username": "Magic-Man",
+      "password": "8edfbsdsdsdsds"
+    },
+    "exampleResponse": {
+      "newUser": {
+        "username": "Magic-Man",
+        "name": "Melon McArthur",
+        "avatar_url": null
+      }
+    }
+  },
+
+  "POST /api/login": {
+    "description": "allows existing users to log in with a username and password",
+    "exampleRequest": {
+      "username": "Magic-Man",
+      "password": "8edfbsdsdsdsds"
+    },
+    "exampleResponse": {"msg": "Successfully logged in."}
   }
 }
 }
