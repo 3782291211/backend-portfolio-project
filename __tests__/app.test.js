@@ -986,9 +986,65 @@ describe("21) GET /api/comments", () => {
   })
 });
 
-describe("22) POST /api/signup", () => {
+describe.only("22) POST /api/signup", () => {
 it("User can signup for a new account", () => {
+  const newUser = {
+    "name": "Rygel The Sixteenth",
+    "username": "dominar_XVI",
+    "password": "28fdbvfd788",
+    "avatar_url": "avatarimages.com/rygleavatar"
+  };
+
   return request(app)
-  .get('/api/signup')
+  .post('/api/signup')
+  .send(newUser)
+  .expect(201)
+  .then(({body : {newUser}}) => {
+    expect(newUser).toEqual(
+      expect.objectContaining({
+        name: expect.any(String),
+        username: expect.any(String),
+        avatar_url: expect.any(String)
+      })
+    )
+  })
+  .then(() => {
+    return request(app)
+    .get('/api/users/dominar_XVI')
+    .expect(200)
+  })
+  .then(({body: {user}}) => {
+    expect(user).toEqual({
+      "name": "Rygel The Sixteenth",
+      "username": "dominar_XVI",
+      "avatar_url": "avatarimages.com/rygleavatar"
+    })
+  })
+})
+
+it("Responds with 400 status code if user does not provide username and/or password.", () => {
+  return request(app)
+  .post('/api/signup')
+  .expect(400)
+  .then(({body : {msg}}) => {
+    expect(msg).toBe('Password and username are required.');
+  })
+})
+
+it("Responds with 400 status code if user tries to signup using a username that's already taken.", () => {
+  const newUser = {
+    "name": "Georgie Billings",
+    "username": "lurker",
+    "password": "sds00M<sdfdbna",
+    "avatar_url": "cloudspiller.com/image556"
+  };
+
+return request(app)
+  .post('/api/signup')
+  .send(newUser)
+  .expect(400)
+  .then(({body : {msg}}) => {
+    expect(msg).toBe("Username is already taken.");
+  })
 })
 })
