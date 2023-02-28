@@ -130,7 +130,8 @@ exports.updateUser = (currentUsername, newUsername, password, name, avatar_url) 
       password = COALESCE($3, password),
       name = COALESCE($4, name),
       avatar_url = COALESCE($5, avatar_url)
-  WHERE username = $1 RETURNING *;
+  WHERE username = $1
+  RETURNING name, username, avatar_url;
   `, [currentUsername, newUsername, password, name, avatar_url])
   .then(({rows: user}) => user[0]);
 };
