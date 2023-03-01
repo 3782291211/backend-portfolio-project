@@ -1153,8 +1153,8 @@ it("Responds with 404 status code if username does not exist.", () => {
 });
 })
 
-/*describe.only("25) DELETE /api/users/:username", () => {
-it("Allows user to delete their account.", () => {
+describe("25) DELETE /api/users/:username", () => {
+it("Allows user to delete their account, which automatically deletes all of their articles.", () => {
   return request(app)
   .delete('/api/users/icellusedkars')
   .expect(204)
@@ -1164,7 +1164,19 @@ it("Allows user to delete their account.", () => {
     .expect(404);
   })
   .then(({body: {msg}}) => {
-    expect(msg).toBe("User not found.");
+    expect(msg).toBe("Username not found.");
+    return request(app)
+    .get('/api/articles?author=icellusedkars')
+    .expect(404)
+  });
+});
+
+it("Responds with 404 status code if username does not exist in database.", () => {
+  return request(app)
+  .delete('/api/users/icellusedkar')
+  .expect(404)
+  .then(({body : {msg}}) => {
+    expect(msg).toBe("Resource not found.");
   })
 })
-})*/
+})
