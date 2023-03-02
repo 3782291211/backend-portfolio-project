@@ -171,16 +171,17 @@ exports.signup = (req, res, next) => {
 exports.patchUser = (req, res, next) => {
   const {username: currentUsername} = req.params;
   const {username: newUsername = null, password = null, name = null, avatar_url = null} = req.body;
+
   if (password) {
     bcrypt.hash(password, 10)
     .then(hashedPassword => {
       return hashedPassword;
     })
     .then(hashedPassword => {
-      updateUser(currentUsername, newUsername, hashedPassword, name, avatar_url)
-      .then(user => res.status(200).send({user}))
-      .catch(err => next(err));
+      return updateUser(currentUsername, newUsername, hashedPassword, name, avatar_url);
     })
+    .then(user => res.status(200).send({user}))
+    .catch(err => next(err));
   } else {
     updateUser(currentUsername, newUsername, password, name, avatar_url)
     .then(user => res.status(200).send({user}))
