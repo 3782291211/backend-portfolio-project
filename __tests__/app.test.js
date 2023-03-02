@@ -1151,6 +1151,16 @@ it("Responds with 404 status code if username does not exist.", () => {
     expect(msg).toBe("User not found.");
   });
 });
+
+it("Responds with 404 status code if request body contains empty key.", () => {
+  return request(app)
+  .patch('/api/users/rogersop')
+  .send({username: null})
+  .expect(400)
+  .then(({body : {msg}}) => {
+    expect(msg).toBe("Field cannot be empty.");
+  });
+});
 })
 
 describe("25) DELETE /api/users/:username", () => {
