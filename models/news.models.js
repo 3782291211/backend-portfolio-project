@@ -123,12 +123,6 @@ exports.insertUser = (username, password, name, avatar_url) => {
 }
 
 exports.updateUser = (currentUsername, newUsername, password, name, avatar_url) => {
-  for (const element of [newUsername, password, name, avatar_url]) {
-    if (/^\s+$/.test(element)) {
-      return Promise.reject({status: 400, msg: "Field cannot be a whitespace."});
-    };
-  };
-
   return db.query(`
   UPDATE users
   SET 
