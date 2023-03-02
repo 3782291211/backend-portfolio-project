@@ -172,6 +172,16 @@ exports.patchUser = (req, res, next) => {
   const {username: currentUsername} = req.params;
   const {username: newUsername = null, password = null, name = null, avatar_url = null} = req.body;
 
+  for (const key in req.body) {
+    if (/^\s+$/.test(req.body[key])) {
+      res.status(400).send({msg: "Field cannot be a whitespace."});
+      return;
+    } else if (!req.body[key]) {
+      res.status(400).send({msg: "Field cannot be empty."});
+      return;
+    };
+  };
+
   if (password) {
     bcrypt.hash(password, 10)
     .then(hashedPassword => {
